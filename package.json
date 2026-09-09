@@ -1,0 +1,32 @@
+{
+  "name": "oikotie",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Oikotie - browser extension that automates the MPASSid login for Kampus, Nova and Studeo.",
+  "license": "GPL-3.0",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-variants.mjs",
+    "build:icons": "node scripts/build-icons.mjs",
+    "package": "node scripts/package-variants.mjs",
+    "test": "node tests/gating.test.mjs && node tests/service-options.test.mjs && node tests/login-flows.test.mjs",
+    "test:gating": "node tests/gating.test.mjs",
+    "test:options": "node tests/service-options.test.mjs",
+    "test:flows": "node tests/login-flows.test.mjs",
+    "test:resilience": "node tests/resilience.test.mjs",
+    "lint:firefox": "web-ext lint --source-dir dist/firefox",
+    "dev:firefox": "web-ext run --source-dir dist/firefox"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^24.0.0",
+    "web-ext": "^10.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Zawaer/oikotie.git"
+  },
+  "homepage": "https://github.com/Zawaer/oikotie",
+  "bugs": {
+    "url": "https://github.com/Zawaer/oikotie/issues"
+  }
+}

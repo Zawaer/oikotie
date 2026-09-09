@@ -1,99 +1,71 @@
-# Kampus Auto Login Browser Extension
+# Oikotie
 
-Tired of manually logging in to Sanoma Pro Kampus again and again? Kampus Auto Login saves time by automating the repetitive parts of the login flow. It can navigate through the Kampus, Sanoma Pro, and MPASSid pages, select your supported school, and continue the login process after your browser fills your saved credentials.
+Skip the login. Oikotie automates the repetitive sign-in steps for the learning platforms Finnish schools actually use — **Kampus** (Sanoma Pro), **Nova** (Otava) and **Studeo** — taking you from the front page to the password prompt without a single click.
 
 ## Install
 
-- **Chrome, Edge, Brave, and other Chromium browsers** — [Install Kampus Auto Login from the Chrome Web Store](https://chromewebstore.google.com/detail/kampus-auto-login/jnlidjmljocgjaapbnmfjbkcmghmogkd)
-- **Firefox and Zen** — [Install Kampus Auto Login from Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/kampus-auto-login/)
-
-Kampus Auto Login is available for both Chrome and Firefox.
-
-**Disclaimer:** Kampus Auto Login is an unofficial browser extension and is not affiliated with, endorsed by, or supported by Sanoma Pro, MPASSid, or any school or municipality.
-
-<img width="2560" height="1600" alt="Promo" src="https://github.com/user-attachments/assets/219a486c-6970-4abd-ac95-8a75f9c60615" />
+- **Chrome, Edge, Brave, and other Chromium browsers** — [Chrome Web Store](https://chromewebstore.google.com/detail/jnlidjmljocgjaapbnmfjbkcmghmogkd)
+- **Firefox and Zen** — [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/2983122/)
 
 ## What it does
 
-When enabled, the extension automates the login process for Sanoma Pro Kampus:
+All three services sign you in through the same MPASSid proxy and then through your own school's login page. Only the first step differs:
 
-1. `kampus.sanomapro.fi` → `kirjautuminen.sanomapro.fi`
-2. Clicks the MPASSid login button
-3. Selects your configured school on `mpass-proxy.csc.fi` when that school is supported
-4. Uses the configured school login domain for the municipality/school login page
-5. Continues the login after your browser has autofilled saved credentials
-6. Redirects from the `sanomapro.fi` landing page back to `https://kampus.sanomapro.fi/`
+| Service | Start at | What it clicks for you |
+| --- | --- | --- |
+| **Kampus** | `kampus.sanomapro.fi` | The MPASSid button |
+| **Nova** | `nova.otava.fi` | Your role, then *MPASSid:llä* — or straight through to the dashboard if you're already signed in |
+| **Studeo** | `studeo.fi` | Through to the app, MPASSid, then your grade level |
 
-If the selected school is not supported yet, the extension lets you save the school but skips login automation for it.
+From there it selects your school on MPASSid, hands off to your school's login page, and continues once your browser has filled in your saved credentials.
 
-https://github.com/user-attachments/assets/fb2a64f0-5d0d-466a-a311-19aea632caf8
+**Oikotie never handles your password.** It waits for your browser's own autofill and presses the button you would have pressed.
 
-## Building from source
+### It stays out of the way
 
-Most people should use the store links above. To build it yourself:
+These services log you out on their own schedule, so the same address might be a login page or your dashboard. Oikotie only acts when there is something to act on:
 
-Build browser-specific packages first:
+- Already signed in? Nothing happens — no spinner over a page you're using.
+- Only the landing pages redirect. Pricing, blog and support pages are left alone.
+- Reached MPASSid from a site Oikotie doesn't handle? It stays out of it.
+- School not set up, or not supported yet? It asks instead of guessing.
+- Each service can be switched off on its own from the popup.
 
-```bash
-node scripts/build-variants.mjs
-```
-
-This creates:
-
-- `dist/chrome/`
-- `dist/firefox/`
-
-Create uploadable zips for both browsers:
-
-```bash
-node scripts/package-variants.mjs
-```
-
-This creates:
-
-- `dist/releases/kampus-auto-login-chrome-v<version>.zip`
-- `dist/releases/kampus-auto-login-firefox-v<version>.zip`
-
-### Chrome / Chromium
-
-1. Download the extension source/release and unzip it.
-2. Open `chrome://extensions/`.
-3. Enable **Developer mode**.
-4. Click **Load unpacked**.
-5. Select the `dist/chrome` folder.
-
-### Firefox / Zen
-
-1. Open `about:debugging#/runtime/this-firefox`.
-2. Click **Load Temporary Add-on...**.
-3. Select `dist/firefox/manifest.json`.
-4. Temporary add-ons are removed when the browser restarts.
-
-## First-time setup
+## Setup
 
 1. Click the extension icon and open **Settings**.
-2. In **Koulun nimi / School name**, start typing and select your school from the dropdown.
-3. If your school is supported, **Kirjautumisosoite / Login domain** is filled and locked automatically.
-4. If your school is not supported yet, you can still save it and use the support request link in settings.
-5. Click **Tallenna / Save**.
-6. Allow the requested permission for that exact login domain when prompted.
-7. Return to Kampus and sign in; after that, the extension can automate the flow when enabled.
+2. Start typing your school name and pick it from the list.
+3. If your school is supported, the login address fills in automatically.
+4. Choose your **Nova user type** and **Studeo grade level** — these answer the questions those two services ask on the way to MPASSid.
+5. Save, and allow the permission prompt for your school's login address.
 
-## Browser variants
+If your school isn't supported yet, you can still save it and request support from the settings page.
 
-The user experience is slightly different between browsers on the municipality login page:
+## Privacy
 
-- Firefox usually continues immediately once the browser has autofilled your credentials. This requires no user intervention.
-- Chrome often needs one extra click or key press on the login page before the autofilled credentials become visible and the extension can continue.
+Oikotie stores only what it needs to log you in: your school, its login address, your language, and your toggle settings. Nothing else is collected, and nothing is sent anywhere. If you have browser sync on, those settings sync between your own browsers.
 
-## Permissions and privacy
+It asks for access to the login pages of the supported services, plus the one school login address you pick during setup. Your password is never stored or read.
 
-The extension stores only the settings needed for login automation in browser extension storage, such as selected school, login domain, language, and toggle states. If browser sync is enabled, those settings may sync between the user’s browsers.
+## Development
 
-On Chrome/Chromium and Firefox, the extension requests access to the exact supported login domain selected during setup. The broader `https://*/adfs/ls/*` pattern is declared only as an optional permission template so the extension can ask for the specific selected domain at runtime.
+```bash
+npm install
+npm run build      # -> dist/chrome/ and dist/firefox/
+npm run package    # -> dist/releases/*.zip
+npm test           # see below
+```
 
-It does not store your password or other sensitive personal data.
+Load `dist/chrome` via **Load unpacked** at `chrome://extensions/` with Developer mode on. For Firefox, `npm run dev:firefox` opens a temporary profile with the extension loaded; `npm run lint:firefox` validates the build before an AMO upload.
+
+These services change their markup without warning, which is by far the most likely way Oikotie breaks, so the tests drive a real Chrome against the real login pages. `npm test` runs the offline checks plus a live pass over every service; `npm run test:resilience` adds cold and warm sessions and a throttled connection. Set `CHROME_PATH` if Chrome isn't in the default location.
+
+Tests stop at the password prompt — finishing a login needs real MPASSid credentials, so a fully rendered login form is the pass condition.
+
+## Disclaimer
+
+Oikotie is an unofficial extension. It is not affiliated with, endorsed by, or supported by Sanoma Pro, Otava, Studeo, MPASSid, or any school or municipality, and it is unrelated to the classifieds site at oikotie.fi.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
+[GNU General Public License v3.0](LICENSE).

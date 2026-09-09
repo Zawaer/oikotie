@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Kampus Auto Login",
-  "version": "2.4",
-  "description": "Automate the repetitive login process for Sanoma Pro Kampus.",
+  "name": "Oikotie",
+  "version": "3.0",
+  "description": "Automate the repetitive MPASSid login process for Kampus, Nova and Studeo.",
   "permissions": [
     "storage"
   ],
@@ -10,18 +10,24 @@
     "https://kirjautuminen.sanomapro.fi/*",
     "https://mpass-proxy.csc.fi/*",
     "https://sanomapro.fi/*",
-    "https://www.sanomapro.fi/*"
+    "https://www.sanomapro.fi/*",
+    "https://nova.otava.fi/*",
+    "https://app.studeo.fi/*",
+    "https://studeo.fi/*",
+    "https://www.studeo.fi/*"
   ],
   "action": {
     "default_popup": "ui/popup.html",
-    "default_title": "Kampus Auto Login",
+    "default_title": "Oikotie",
     "default_icon": {
+      "16": "ui/icons/icon16.png",
       "32": "ui/icons/icon32.png",
       "48": "ui/icons/icon48.png",
       "64": "ui/icons/icon64.png"
     }
   },
   "icons": {
+    "16": "ui/icons/icon16.png",
     "32": "ui/icons/icon32.png",
     "48": "ui/icons/icon48.png",
     "64": "ui/icons/icon64.png",
@@ -41,20 +47,10 @@
         "https://kirjautuminen.sanomapro.fi/*"
       ],
       "js": [
+        "scripts/services.js",
         "ui/i18n.js",
         "scripts/content-common.js",
-        "scripts/kirjautuminen-content.js"
-      ],
-      "run_at": "document_end"
-    },
-    {
-      "matches": [
-        "https://mpass-proxy.csc.fi/*"
-      ],
-      "js": [
-        "ui/i18n.js",
-        "scripts/content-common.js",
-        "scripts/mpass-content.js"
+        "scripts/kampus-login-content.js"
       ],
       "run_at": "document_end"
     },
@@ -64,9 +60,48 @@
         "https://www.sanomapro.fi/*"
       ],
       "js": [
+        "scripts/services.js",
         "ui/i18n.js",
         "scripts/content-common.js",
         "scripts/sanomapro-content.js"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://nova.otava.fi/*"
+      ],
+      "js": [
+        "scripts/services.js",
+        "ui/i18n.js",
+        "scripts/content-common.js",
+        "scripts/nova-content.js"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://studeo.fi/*",
+        "https://www.studeo.fi/*",
+        "https://app.studeo.fi/*"
+      ],
+      "js": [
+        "scripts/services.js",
+        "ui/i18n.js",
+        "scripts/content-common.js",
+        "scripts/studeo-content.js"
+      ],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://mpass-proxy.csc.fi/*"
+      ],
+      "js": [
+        "scripts/services.js",
+        "ui/i18n.js",
+        "scripts/content-common.js",
+        "scripts/mpass-content.js"
       ],
       "run_at": "document_end"
     }

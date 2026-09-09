@@ -99,7 +99,7 @@ function assignPreconfiguredSchoolDomain(domainBySchool, schoolName, domain, sou
     const existingDomain = domainBySchool[normalizedSchoolName];
     if (existingDomain && existingDomain !== domain) {
         console.warn(
-            `Kampus Auto Login: School "${normalizedSchoolName}" is assigned to multiple preconfigured domains (${existingDomain}, ${domain}) in ${sourceLabel}. Using the latest value.`
+            `Oikotie: School "${normalizedSchoolName}" is assigned to multiple preconfigured domains (${existingDomain}, ${domain}) in ${sourceLabel}. Using the latest value.`
         );
     }
 
@@ -202,7 +202,7 @@ async function initPreconfiguredSchoolDomains() {
             domainBySchool
         );
     } catch (e) {
-        console.warn('Kampus Auto Login: Could not load MPASSid grouped domain config:', e);
+        console.warn('Oikotie: Could not load MPASSid grouped domain config:', e);
     }
 
     buildExplicitPreconfiguredSchoolDomains(preconfiguredSchoolDomainGroups, domainBySchool);
@@ -309,7 +309,7 @@ async function ensureAdfsPermission(domain) {
         // the prompt to fail without appearing.
         return await extensionApi.permissions.request({ origins: [pattern] });
     } catch (error) {
-        console.error('Kampus Auto Login: Failed to request ADFS permission', error);
+        console.error('Oikotie: Failed to request ADFS permission', error);
         return false;
     }
 }
@@ -524,6 +524,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     const successMsg = document.getElementById('successMsg');
     const langSelect = document.getElementById('langSelect');
     const versionDisplay = document.getElementById('versionDisplay');
+    const novaRoleSelect = document.getElementById('novaRole');
+    const studeoLevelSelect = document.getElementById('studeoLevel');
+    const services = globalThis.OikotieServices || {};
 
     function showFormError(message) {
         successMsg.textContent = message;
@@ -540,8 +543,15 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     let storageResult = { schoolName: '', adfsDomain: '' };
     try {
-        storageResult = await extensionApi.storage.sync.get({ schoolName: '', adfsDomain: '' });
+        storageResult = await extensionApi.storage.sync.get({
+            schoolName: '',
+            adfsDomain: '',
+            novaRole: services.DEFAULT_NOVA_ROLE || 'student',
+            studeoLevel: services.DEFAULT_STUDEO_LEVEL || 'secondary'
+        });
         if (storageResult.adfsDomain) domainInput.value = storageResult.adfsDomain;
+        if (novaRoleSelect) novaRoleSelect.value = storageResult.novaRole;
+        if (studeoLevelSelect) studeoLevelSelect.value = storageResult.studeoLevel;
     } catch (e) {
         console.error('Error loading settings:', e);
     }
@@ -555,7 +565,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     if (versionDisplay) {
         const version = extensionApi.runtime.getManifest()?.version || '';
-        versionDisplay.textContent = version ? `Kampus Auto Login v${version}` : 'Kampus Auto Login';
+        versionDisplay.textContent = version ? `Oikotie v${version}` : 'Oikotie';
     }
 
     // Initialize school selector
@@ -606,7 +616,9 @@ document.addEventListener('DOMContentLoaded', async function () {
             await extensionApi.storage.sync.set({
                 schoolName,
                 adfsDomain: domain,
-                schoolSupported
+                schoolSupported,
+                novaRole: novaRoleSelect ? novaRoleSelect.value : (services.DEFAULT_NOVA_ROLE || 'student'),
+                studeoLevel: studeoLevelSelect ? studeoLevelSelect.value : (services.DEFAULT_STUDEO_LEVEL || 'secondary')
             });
             try {
                 await extensionApi.runtime.sendMessage({ action: 'syncAdfsAutomation' });

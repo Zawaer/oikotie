@@ -8,15 +8,20 @@ const rootDir = path.resolve(__dirname, '..');
 const releasesDir = path.join(rootDir, 'dist', 'releases');
 
 const targets = {
-  chrome: {
-    distDir: path.join(rootDir, 'dist', 'chrome'),
-    filenamePrefix: 'kampus-auto-login-chrome-v'
-  },
-  firefox: {
-    distDir: path.join(rootDir, 'dist', 'firefox'),
-    filenamePrefix: 'kampus-auto-login-firefox-v'
-  }
+  chrome: { distDir: path.join(rootDir, 'dist', 'chrome') },
+  firefox: { distDir: path.join(rootDir, 'dist', 'firefox') }
 };
+
+// Derive the zip name from the manifest rather than hardcoding it, so renaming
+// the extension does not quietly keep shipping files under the old name.
+function toFileSlug(name) {
+  return String(name)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'extension';
+}
 
 function runCommand(command, args, cwd) {
   return new Promise((resolve, reject) => {
@@ -33,13 +38,16 @@ function runCommand(command, args, cwd) {
   });
 }
 
-async function getManifestVersion(manifestPath) {
+async function readManifest(manifestPath) {
   const manifestText = await readFile(manifestPath, 'utf8');
   const manifest = JSON.parse(manifestText);
   if (!manifest.version) {
     throw new Error(`${path.relative(rootDir, manifestPath)} is missing a version field`);
   }
-  return manifest.version;
+  if (!manifest.name) {
+    throw new Error(`${path.relative(rootDir, manifestPath)} is missing a name field`);
+  }
+  return manifest;
 }
 
 async function ensureDirExists(dirPath) {
@@ -59,8 +67,9 @@ async function packageTarget(target) {
   await ensureDirExists(config.distDir);
 
   const manifestPath = path.join(config.distDir, 'manifest.json');
-  const version = await getManifestVersion(manifestPath);
-  const outputZip = path.join(releasesDir, `${config.filenamePrefix}${version}.zip`);
+  const manifest = await readManifest(manifestPath);
+  const slug = toFileSlug(manifest.name);
+  const outputZip = path.join(releasesDir, `${slug}-${target}-v${manifest.version}.zip`);
 
   await mkdir(releasesDir, { recursive: true });
   await rm(outputZip, { force: true });

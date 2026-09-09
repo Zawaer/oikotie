@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Oikotie">
+  <title>Oikotie</title>
+  <!-- 16px cut of the app icon. Identical to icon-tile.svg but with the mark
+       set larger in the tile: at that size the standard padding leaves the arc
+       and arrowhead too small to tell apart, so it trades breathing room for
+       legibility. Every larger size uses the standard tile. -->
+  <rect width="32" height="32" rx="7.25" fill="#c2410c"/>
+  <g transform="translate(1.22 -0.22) scale(0.914)">
+    <path d="M3.6 20.8 C4.2 7.4 19.5 3.6 26 11" fill="none" stroke="#ffffff" stroke-width="3.3" stroke-linecap="round"/>
+    <polygon points="30.4,16.5 22.9,13.5 29.1,8.5" fill="#ffffff"/>
+    <circle cx="5" cy="27.6" r="3" fill="#ffffff"/>
+    <circle cx="14.5" cy="27.6" r="3" fill="#ffffff"/>
+    <circle cx="24" cy="27.6" r="3" fill="#ffffff"/>
+  </g>
+</svg>

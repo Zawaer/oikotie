@@ -3,13 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kampus Auto Login</title>
+    <title>Oikotie</title>
     <link rel="stylesheet" href="popup.css">
 </head>
 <body class="popup-page">
     <div class="container">
         <header class="popup-header">
-            <h1 data-i18n="popupTitle">Kampus Auto Login</h1>
+            <!-- currentColor picks up the header's white text, so the mark
+                 needs no separate light/dark asset. -->
+            <svg class="popup-logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                <path d="M3.6 20.8 C4.2 7.4 19.5 3.6 26 11" fill="none" stroke="currentColor" stroke-width="3.3" stroke-linecap="round"/>
+                <polygon points="30.4,16.5 22.9,13.5 29.1,8.5" fill="currentColor"/>
+                <circle cx="5" cy="27.6" r="3" fill="currentColor"/>
+                <circle cx="14.5" cy="27.6" r="3" fill="currentColor"/>
+                <circle cx="24" cy="27.6" r="3" fill="currentColor"/>
+            </svg>
+            <h1 data-i18n="popupTitle">Oikotie</h1>
         </header>
         <main class="content">
             <section class="toggles-section">
@@ -36,6 +45,14 @@
                 </label>
             </section>
 
+            <section class="services-section">
+                <div class="section-heading">
+                    <span class="section-title" data-i18n="popupServicesTitle">Services</span>
+                    <span class="section-desc" data-i18n="popupServicesDescription">Automate the login for these services</span>
+                </div>
+                <div id="serviceToggles"></div>
+            </section>
+
             <footer class="footer">
                 <div class="school-info">
                     <span class="school-name" id="schoolDisplay">—</span>
@@ -48,6 +65,7 @@
         </main>
     </div>
     
+    <script src="../scripts/services.js"></script>
     <script src="i18n.js"></script>
     <script src="popup.js"></script>
 </body>

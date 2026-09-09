@@ -61,12 +61,19 @@ async function buildTarget(target) {
     'dist',
     'manifests',
     'node_modules',
+    'tests',
+    'package.json',
+    'package-lock.json',
     'school_names.json'
   ]);
   const rootEntries = await readdir(rootDir, { withFileTypes: true });
 
   for (const entry of rootEntries) {
     if (ignoredTopLevel.has(entry.name)) continue;
+    // Design exports and other archives dropped in the repo root are working
+    // material, not part of the extension - shipping them just bloats the
+    // uploaded package.
+    if (entry.isFile() && entry.name.toLowerCase().endsWith('.zip')) continue;
 
     const source = path.join(rootDir, entry.name);
     const destination = path.join(outDir, entry.name);

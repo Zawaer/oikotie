@@ -1,3 +1,32 @@
+/* Design tokens.
+ *
+ * These mirror OVERLAY_TOKENS in scripts/content-common.js. The overlays live
+ * in shadow roots on pages we do not control and cannot share a stylesheet
+ * with these pages, so the values are stated twice on purpose - change them in
+ * both places or the in-page overlays drift away from the popup. */
+:root {
+    --oikotie-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    --oikotie-accent: #c2410c;
+    --oikotie-accent-hover: #a5370a;
+    --oikotie-accent-active: #8c2f09;
+    --oikotie-accent-ring: rgba(194, 65, 12, 0.25);
+    --oikotie-accent-tint: #fdf2ec;
+    --oikotie-accent-tint-border: #f0d2c1;
+    --oikotie-accent-selected: #fbe4d8;
+    --oikotie-accent-track: #f0d9cb;
+    --oikotie-hairline: #f7e9e1;
+    --oikotie-text: #1f2937;
+    --oikotie-body: #495057;
+    --oikotie-muted: #6c757d;
+    --oikotie-page: #f9f8f6;
+    --oikotie-surface: #faf9f7;
+    --oikotie-raised: #ffffff;
+    --oikotie-border: #e6e3df;
+    --oikotie-radius-card: 14px;
+    --oikotie-radius-control: 8px;
+    --oikotie-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -5,16 +34,15 @@
 }
 
 html {
-    background: #f8f9fa;
+    background: var(--oikotie-page);
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial,
-        sans-serif;
+    font-family: var(--oikotie-font);
     font-size: 14px;
     line-height: 1.4;
-    color: #1f1a2e;
-    background: #f8f9fa;
+    color: var(--oikotie-text);
+    background: var(--oikotie-page);
 }
 
 .container {
@@ -27,9 +55,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     padding: 12px 18px;
-    background: #643695;
+    background: var(--oikotie-accent);
     color: #fff;
+}
+
+.popup-logo {
+    width: 19px;
+    height: 19px;
+    flex: 0 0 auto;
 }
 
 .popup-header h1 {
@@ -55,7 +90,7 @@ body {
     justify-content: space-between;
     gap: 18px;
     padding: 16px 0;
-    border-bottom: 1px solid #f1ebf8;
+    border-bottom: 1px solid var(--oikotie-hairline);
     cursor: pointer;
 }
 
@@ -87,7 +122,7 @@ body {
     font-size: 11.5px;
     font-weight: 500;
     line-height: 1.45;
-    color: #9d8bb9;
+    color: var(--oikotie-muted);
 }
 
 .toggle-switch {
@@ -111,7 +146,7 @@ body {
     position: absolute;
     inset: 0;
     border-radius: 999px;
-    background: #e5ddf5;
+    background: var(--oikotie-accent-track);
     transition: background 0.22s ease;
 }
 
@@ -129,7 +164,7 @@ body {
 }
 
 .toggle-switch input:checked + .slider {
-    background: #643695;
+    background: var(--oikotie-accent);
 }
 
 .toggle-switch input:checked + .slider::before {
@@ -142,7 +177,7 @@ body {
     justify-content: space-between;
     gap: 14px;
     padding: 14px 22px;
-    border-top: 1px solid #f1ebf8;
+    border-top: 1px solid var(--oikotie-hairline);
     background: #fff;
 }
 
@@ -156,7 +191,7 @@ body {
 
 .school-name {
     overflow: hidden;
-    color: #4a3268;
+    color: var(--oikotie-text);
     font-size: 12px;
     font-weight: 600;
     line-height: 1.35;
@@ -166,7 +201,7 @@ body {
 
 .school-domain {
     overflow: hidden;
-    color: #b1a1cc;
+    color: var(--oikotie-muted);
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 11px;
     font-weight: 600;
@@ -194,7 +229,7 @@ body {
 .btn-settings {
     padding: 0 16px;
     border: 1px solid transparent;
-    background: #643695;
+    background: var(--oikotie-accent);
     color: #fff;
     font-size: 12px;
     font-weight: 700;
@@ -202,7 +237,7 @@ body {
 }
 
 .btn-settings:hover {
-    background: #552a7d;
+    background: var(--oikotie-accent-hover);
 }
 
 @-moz-document url-prefix() {
@@ -226,5 +261,35 @@ body {
 .toggle-switch input:focus-visible + .slider,
 .btn-settings:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(100, 54, 149, 0.22);
+    box-shadow: 0 0 0 3px var(--oikotie-accent-ring);
+}
+
+.services-section {
+    padding: 4px 22px 18px;
+    border-top: 1px solid var(--oikotie-hairline);
+}
+
+.section-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px 0 4px;
+}
+
+.section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--oikotie-accent);
+}
+
+.section-desc {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--oikotie-muted);
+}
+
+.services-section .toggle-row:first-child {
+    padding-top: 12px;
 }

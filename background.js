@@ -1,6 +1,9 @@
 // Background service worker – open setup on install and keep the dynamic
 // ADFS content script registration in sync with the user's settings.
 //
+// Every supported service (Kampus, Nova, Studeo) ends on the same school ADFS
+// page, so one registration covers all of them.
+//
 // The ADFS domain is chosen per school at setup time, so it can't be a
 // static content script in the manifest. It used to be injected from a
 // tabs.onUpdated listener via scripting.executeScript, but that only fires
@@ -31,7 +34,7 @@ function sendAsyncResponse(sendResponse, action) {
     action()
         .then((result) => sendResponse(result))
         .catch((error) => {
-            console.error('Kampus Auto Login:', error);
+            console.error('Oikotie:', error);
             sendResponse({
                 opened: false,
                 closed: 0,
@@ -86,14 +89,14 @@ async function syncAdfsContentScript() {
     await extensionApi.scripting.registerContentScripts([{
         id: ADFS_SCRIPT_ID,
         matches: [pattern],
-        js: ['ui/i18n.js', 'scripts/content-common.js', 'scripts/adfs-content.js'],
+        js: ['scripts/services.js', 'ui/i18n.js', 'scripts/content-common.js', 'scripts/adfs-content.js'],
         runAt: 'document_end'
     }]);
 }
 
 function runSync(context) {
     syncAdfsContentScript().catch((error) => {
-        console.error(`Kampus Auto Login: Failed to sync ADFS content script (${context})`, error);
+        console.error(`Oikotie: Failed to sync ADFS content script (${context})`, error);
     });
 }
 
@@ -102,7 +105,7 @@ extensionApi.runtime.onInstalled.addListener((details) => {
 
     if (details.reason === 'install') {
         openSetupPage().catch((error) => {
-            console.error('Kampus Auto Login: Failed to open setup page on install', error);
+            console.error('Oikotie: Failed to open setup page on install', error);
         });
     }
 });

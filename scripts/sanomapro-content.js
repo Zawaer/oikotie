@@ -1,47 +1,40 @@
-// Content script for sanomapro.fi
-// Redirects to kampus.sanomapro.fi on the root path
+// Content script for sanomapro.fi (Sanoma Pro landing page).
+// Redirects to kampus.sanomapro.fi so the Kampus login flow can start.
+//
+// Nova and Studeo need no equivalent: nova.otava.fi already opens on its role
+// picker, and app.studeo.fi redirects itself to /auth/login.
 
-(function(){
+(function () {
     'use strict';
 
     const extensionApi = globalThis.browser || globalThis.chrome;
-    const contentCommon = globalThis.KampusContentCommon || {};
-    const showLoadingOverlay = contentCommon.showLoadingOverlay || (() => false);
-    const referrerIncludesKampusHost = contentCommon.referrerIncludesKampusHost || (() => false);
-    const hasRecentKampusFlowFlag = contentCommon.hasRecentKampusFlowFlag || (async () => false);
-    const kampusDirectUrl = 'https://kampus.sanomapro.fi/';
-    console.log('Kampus Auto Login: Running on sanomapro.fi');
+    const common = globalThis.OikotieContentCommon || {};
+    const services = globalThis.OikotieServices || {};
 
-    async function autoLoginEnabled() {
-        try {
-            const res = await extensionApi.storage.sync.get({
-                autoLoginEnabled: true,
-                schoolSupported: true
-            });
-            return res.autoLoginEnabled && res.schoolSupported;
-        } catch (e) {
-            console.error('Kampus Auto Login: Error reading settings', e);
-            return true;
-        }
-    }
+    const SERVICE_ID = 'kampus';
+    const kampusDirectUrl = (services.SERVICES && services.SERVICES.kampus.homeUrl) || 'https://kampus.sanomapro.fi/';
 
+    console.log('Oikotie: Running on sanomapro.fi');
+
+    // The support pages are ordinary content, so only treat them as part of the
+    // login flow when the user demonstrably came through it.
     async function isKampusFlow() {
-        if (referrerIncludesKampusHost()) {
+        if (common.referrerIncludesServiceHost()) {
             return true;
         }
-
-        return await hasRecentKampusFlowFlag(extensionApi);
+        const flow = await common.getRecentLoginFlow(extensionApi);
+        return Boolean(flow && flow.service === SERVICE_ID);
     }
 
     async function runSanomaProRedirect() {
-        if (!await autoLoginEnabled()) {
-            console.log('Kampus Auto Login: Auto-login disabled; will not redirect on sanomapro');
+        if (!await common.isAutomationEnabled(extensionApi, SERVICE_ID)) {
+            console.log('Oikotie: Auto-login disabled; will not redirect on sanomapro');
             return;
         }
 
         const host = window.location.hostname;
         if (host.includes('kampus.sanomapro.fi')) {
-            console.log('Kampus Auto Login: Already on kampus host; no redirect needed');
+            console.log('Oikotie: Already on kampus host; no redirect needed');
             return;
         }
 
@@ -52,23 +45,18 @@
 
             // Redirect the support page too when it is part of the Kampus flow.
             if (isLandingPage || (isTukiPage && await isKampusFlow())) {
-                console.log('Kampus Auto Login: Redirecting directly to Kampus page');
+                console.log('Oikotie: Redirecting directly to Kampus page');
                 const uiLanguage = await getLanguage();
-                showLoadingOverlay(t(uiLanguage, 'commonLoggingInLabel'));
+                common.showLoadingOverlay(t(uiLanguage, 'commonLoggingInLabel'));
                 window.location.assign(kampusDirectUrl);
             } else {
-                console.log('Kampus Auto Login: On sanomapro subpage', path, '— not redirecting');
+                console.log('Oikotie: On sanomapro subpage', path, '— not redirecting');
             }
             return;
         }
 
-        console.log('Kampus Auto Login: Host does not require sanomapro redirect');
+        console.log('Oikotie: Host does not require sanomapro redirect');
     }
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', runSanomaProRedirect);
-    } else {
-        runSanomaProRedirect();
-    }
-
+    common.runWhenReady(runSanomaProRedirect);
 })();

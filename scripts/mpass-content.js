@@ -1,32 +1,63 @@
-// Content script for mpass-proxy.csc.fi
-// This script automatically clicks the button that redirects to sanomapro.fi
+// Content script for mpass-proxy.csc.fi (the shared MPASSid school picker).
+//
+// Every supported service funnels into this page, so nothing here is
+// service-specific - it selects the school the user configured and continues.
+// The only service-aware part is the guard at the top: this page is reachable
+// from plenty of sites we do not handle, so we automate it only when we can
+// tell the user arrived from one of ours.
 
-(function() {
+(function () {
     'use strict';
 
     const extensionApi = globalThis.browser || globalThis.chrome;
-    const contentCommon = globalThis.KampusContentCommon || {};
-    const showLoadingOverlay = contentCommon.showLoadingOverlay || (() => false);
-    const removeElementWithFade = contentCommon.removeElementWithFade || (() => false);
-    const showSchoolRequiredOverlay = contentCommon.showSchoolRequiredOverlay || (() => false);
-    const includesKampusHost = contentCommon.includesKampusHost || (() => false);
-    const referrerIncludesKampusHost = contentCommon.referrerIncludesKampusHost || (() => false);
-    const hasRecentKampusFlowFlag = contentCommon.hasRecentKampusFlowFlag || (async () => false);
+    const common = globalThis.OikotieContentCommon || {};
 
-    console.log('Kampus Auto Login: Running on mpass-proxy.csc.fi');
+    // The school list is fetched over the network as you type. On a slow link
+    // that request can take far longer than it feels like it should, so the
+    // budget here is generous for the same reason the MPASSid button's is: a
+    // short fixed budget is exactly what made this fail on throttled
+    // connections, giving up seconds before the results arrived.
+    const SCHOOL_SEARCH_TIMEOUT_MS = 45000;
+    const SCHOOL_POLL_INTERVAL_MS = 400;
+    const SEARCH_RETRY_INTERVAL_MS = 2500;
 
-    // Check if auto-login is enabled before proceeding
-    async function checkAutoLoginEnabled() {
+    // "Continue" is not necessarily clickable the instant a school is picked.
+    const CONTINUE_POLL_INTERVAL_MS = 250;
+    const CONTINUE_TIMEOUT_MS = 15000;
+
+    console.log('Oikotie: Running on mpass-proxy.csc.fi');
+
+    // Choose a school and move on. Waiting for Continue to actually be there
+    // and enabled beats a fixed delay: the old 300 ms guess was fine locally
+    // and too short as soon as the connection was not.
+    function selectSchoolAndContinue(schoolItem) {
         try {
-            const result = await extensionApi.storage.sync.get({
-                autoLoginEnabled: true,
-                schoolSupported: true
-            });
-            return result.autoLoginEnabled && result.schoolSupported;
+            schoolItem.click();
         } catch (error) {
-            console.error('Kampus Auto Login: Error checking settings:', error);
-            return true;
+            console.error('Oikotie: Failed to click school item', error);
+            return;
         }
+
+        const started = Date.now();
+        const timer = setInterval(() => {
+            const continueButton = document.querySelector('#continueButton');
+            if (continueButton && !continueButton.disabled && common.isVisible(continueButton)) {
+                clearInterval(timer);
+                try {
+                    continueButton.click();
+                    console.log('Oikotie: Clicked continue after selecting school');
+                } catch (error) {
+                    console.error('Oikotie: Failed to click continue', error);
+                }
+                return;
+            }
+
+            if (Date.now() - started > CONTINUE_TIMEOUT_MS) {
+                clearInterval(timer);
+                console.log('Oikotie: Continue button never became clickable');
+                common.hideLoadingOverlay();
+            }
+        }, CONTINUE_POLL_INTERVAL_MS);
     }
 
     // Find school item by text content (matches configured school name)
@@ -71,12 +102,38 @@
         });
     }
 
+    // Type the school name the way a person would, so the page's own search
+    // handler fires. Repeating this is the whole point of extracting it: see
+    // the retry loop below.
+    function simulateSearchTyping(searchInput, searchTerm) {
+        try {
+            searchInput.focus();
+            searchInput.click();
+            searchInput.value = '';
+
+            for (let i = 0; i < searchTerm.length; i++) {
+                searchInput.value = searchTerm.substring(0, i + 1);
+                searchInput.dispatchEvent(new KeyboardEvent('keydown', { key: searchTerm[i], bubbles: true }));
+                searchInput.dispatchEvent(new KeyboardEvent('keypress', { key: searchTerm[i], bubbles: true }));
+                searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+                searchInput.dispatchEvent(new KeyboardEvent('keyup', { key: searchTerm[i], bubbles: true }));
+            }
+
+            searchInput.dispatchEvent(new Event('change', { bubbles: true }));
+            searchInput.dispatchEvent(new Event('blur', { bubbles: true }));
+            return true;
+        } catch (e) {
+            console.warn('Oikotie: Error during search input simulation', e);
+            return false;
+        }
+    }
+
     // State detection & handlers – uses configured school from storage
     async function handleMPassProxyStates() {
-        const { schoolName } = await extensionApi.storage.sync.get({ schoolName: '' });
+        const { schoolName } = await common.getSettings(extensionApi);
         const searchTerm = (schoolName || '').trim().toLowerCase();
         if (!searchTerm) {
-            console.log('Kampus Auto Login: No school configured, skipping school selection');
+            console.log('Oikotie: No school configured, skipping school selection');
             return 'no_school_configured';
         }
 
@@ -85,7 +142,7 @@
         if (lastSelectedSchool) {
             const lastText = (lastSelectedSchool.textContent || '').toLowerCase();
             if (lastText.includes(searchTerm) || searchTerm.includes(lastText.split(/[\s,]+/)[0])) {
-                console.log('Kampus Auto Login: Found last selected school matching config, clicking it');
+                console.log('Oikotie: Found last selected school matching config, clicking it');
                 lastSelectedSchool.click();
                 return 'clicked_last_selected';
             }
@@ -98,27 +155,8 @@
             const minMatch = searchTerm.substring(0, Math.min(4, searchTerm.length));
 
             if (!currentValue || !currentValue.includes(minMatch)) {
-                console.log('Kampus Auto Login: Filling search input with', searchTerm);
-
-                try {
-                    searchInput.focus();
-                    searchInput.click();
-                    searchInput.value = '';
-
-                    for (let i = 0; i < searchTerm.length; i++) {
-                        searchInput.value = searchTerm.substring(0, i + 1);
-                        searchInput.dispatchEvent(new KeyboardEvent('keydown', { key: searchTerm[i], bubbles: true }));
-                        searchInput.dispatchEvent(new KeyboardEvent('keypress', { key: searchTerm[i], bubbles: true }));
-                        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-                        searchInput.dispatchEvent(new KeyboardEvent('keyup', { key: searchTerm[i], bubbles: true }));
-                    }
-
-                    searchInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    searchInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                } catch (e) {
-                    console.warn('Kampus Auto Login: Error during search input simulation', e);
-                }
-
+                console.log('Oikotie: Filling search input with', searchTerm);
+                simulateSearchTyping(searchInput, searchTerm);
                 return 'searching_school';
             }
 
@@ -126,11 +164,8 @@
             const continueButton = document.querySelector('#continueButton');
 
             if (schoolItem && continueButton) {
-                console.log('Kampus Auto Login: Found school and continue button');
-                schoolItem.click();
-                setTimeout(() => {
-                    continueButton.click();
-                }, 300);
+                console.log('Oikotie: Found school and continue button');
+                selectSchoolAndContinue(schoolItem);
                 return 'clicked_search_result';
             }
         }
@@ -138,61 +173,48 @@
         // State 3: Check if page is automatically redirecting
         const scriptTags = document.querySelectorAll('script');
         for (let script of scriptTags) {
-            if (script.textContent && 
+            if (script.textContent &&
                 (script.textContent.includes('location.href') ||
                  script.textContent.includes('window.location') ||
                  script.textContent.includes('redirect'))) {
-                console.log('Kampus Auto Login: Detected automatic redirect script, waiting...');
+                console.log('Oikotie: Detected automatic redirect script, waiting...');
                 return 'auto_redirecting';
             }
         }
 
         const metaRefresh = document.querySelector('meta[http-equiv="refresh"]');
         if (metaRefresh) {
-            console.log('Kampus Auto Login: Detected meta refresh, waiting for automatic redirect...');
+            console.log('Oikotie: Detected meta refresh, waiting for automatic redirect...');
             return 'auto_redirecting';
         }
 
         return 'unknown_state';
     }
 
-    async function isKampusFlow() {
-        try {
-            const params = new URLSearchParams(window.location.search);
-            for (const [key, value] of params.entries()) {
-                if (includesKampusHost(`${key}=${value}`)) {
-                    return true;
-                }
-            }
-        } catch (e) {}
-
-        if (referrerIncludesKampusHost()) {
-            return true;
-        }
-
-        return await hasRecentKampusFlowFlag(extensionApi);
-    }
-    
     async function waitAndTryClick() {
-        const isEnabled = await checkAutoLoginEnabled();
-        
-        if (!isEnabled) {
-            console.log('Kampus Auto Login: Auto-login is disabled, skipping automation');
+        // Which of our services sent the user here? Null means we have no
+        // evidence this MPASSid page belongs to a flow we started.
+        const serviceId = await common.detectFlowService(extensionApi);
+
+        if (!serviceId) {
+            console.log('Oikotie: MPASSid page not part of a known service flow, skipping');
             return;
         }
 
-        if (!await isKampusFlow()) {
-            console.log('Kampus Auto Login: MPASS page not related to Kampus flow, skipping');
+        if (!await common.isAutomationEnabled(extensionApi, serviceId)) {
+            console.log(`Oikotie: Auto-login disabled for ${serviceId}, skipping automation`);
             return;
         }
-        
+
+        console.log(`Oikotie: Handling MPASSid picker for ${serviceId}`);
+
         const uiLanguage = await getLanguage();
-        const { schoolName } = await extensionApi.storage.sync.get({ schoolName: '' });
+        const { schoolName } = await common.getSettings(extensionApi);
         const searchTerm = (schoolName || '').trim().toLowerCase();
         if (!searchTerm) {
-            console.log('Kampus Auto Login: No school configured, waiting for user to choose one in settings');
-            removeElementWithFade('kampus-autologin-overlay');
-            showSchoolRequiredOverlay(
+            console.log('Oikotie: No school configured, waiting for user to choose one in settings');
+            common.hideLoadingOverlay();
+            common.showSchoolRequiredOverlay(
                 extensionApi,
                 t(uiLanguage, 'mpassSchoolRequiredTitle'),
                 t(uiLanguage, 'mpassSchoolRequiredDescription'),
@@ -201,15 +223,15 @@
             return;
         }
 
-        console.log('Kampus Auto Login: Auto-login is enabled, proceeding...');
-        showLoadingOverlay(t(uiLanguage, 'commonLoggingInLabel'));
-        
+        console.log('Oikotie: Auto-login is enabled, proceeding...');
+        common.showLoadingOverlay(t(uiLanguage, 'commonLoggingInLabel'));
+
         // First: try immediate presence of last-selected school (only if it matches configured school)
         const lastNow = document.querySelector('#selectedList > div > div.listItem > div');
         if (lastNow && searchTerm) {
             const lastText = (lastNow.textContent || '').toLowerCase();
             if (lastText.includes(searchTerm) || searchTerm.split(/\s+/).some((p) => lastText.includes(p))) {
-                console.log('Kampus Auto Login: Found last selected school matching config, clicking it');
+                console.log('Oikotie: Found last selected school matching config, clicking it');
                 try { lastNow.click(); } catch (e) { console.error('Error clicking last selected', e); }
                 return;
             }
@@ -220,11 +242,8 @@
         if (observedLast && searchTerm) {
             const lastText = (observedLast.textContent || '').toLowerCase();
             if (lastText.includes(searchTerm) || searchTerm.split(/\s+/).some((p) => lastText.includes(p))) {
-                const stored = await extensionApi.storage.sync.get({ autoLoginEnabled: true });
-                if (stored.autoLoginEnabled) {
-                    console.log('Kampus Auto Login: Observed last selected school matching config, clicking');
-                    try { observedLast.click(); } catch (e) { console.error('Error clicking observed element', e); }
-                }
+                console.log('Oikotie: Observed last selected school matching config, clicking');
+                try { observedLast.click(); } catch (e) { console.error('Error clicking observed element', e); }
                 return;
             }
         }
@@ -233,9 +252,9 @@
         const result = await handleMPassProxyStates();
 
         if (result === 'no_school_configured') {
-            console.log('Kampus Auto Login: Configure your school in extension options');
-            removeElementWithFade('kampus-autologin-overlay');
-            showSchoolRequiredOverlay(
+            console.log('Oikotie: Configure your school in extension options');
+            common.hideLoadingOverlay();
+            common.showSchoolRequiredOverlay(
                 extensionApi,
                 t(uiLanguage, 'mpassSchoolRequiredTitle'),
                 t(uiLanguage, 'mpassSchoolRequiredDescription'),
@@ -245,87 +264,84 @@
         }
 
         if (result === 'clicked_last_selected' || result === 'clicked_search_result') {
-            console.log('Kampus Auto Login: Successfully handled mpass-proxy state:', result);
+            console.log('Oikotie: Successfully handled mpass-proxy state:', result);
             return;
         }
 
         if (result === 'auto_redirecting') {
-            console.log('Kampus Auto Login: Page is auto-redirecting, waiting...');
+            console.log('Oikotie: Page is auto-redirecting, waiting...');
             return;
         }
 
         if (result === 'searching_school') {
-            console.log('Kampus Auto Login: Initiated school search, waiting for completion...');
+            console.log('Oikotie: Initiated school search, waiting for completion...');
 
             await new Promise(r => setTimeout(r, 800));
 
-            const { schoolName } = await extensionApi.storage.sync.get({ schoolName: '' });
-            const term = (schoolName || '').trim().toLowerCase();
-
-            let schoolItem = findSchoolByText(term);
+            const schoolItem = findSchoolByText(searchTerm);
             if (schoolItem) {
-                console.log('Kampus Auto Login: School found, clicking it');
-                schoolItem.click();
-                setTimeout(() => {
-                    const cb = document.querySelector('#continueButton');
-                    if (cb) cb.click();
-                }, 300);
+                console.log('Oikotie: School found, clicking it');
+                selectSchoolAndContinue(schoolItem);
                 return;
             }
 
-            console.log('Kampus Auto Login: School not found immediately, observing...');
-            const maxWait = 12000;
+            console.log('Oikotie: School not found immediately, observing...');
+
+            // Polling for results is not enough on a slow connection. The page
+            // fetches its school list asynchronously, and if we finish typing
+            // before that arrives, its search runs against an empty dataset and
+            // finds nothing. The input then already holds the school name, so
+            // nothing ever fires the search again and the page sits there
+            // forever with a query that has already failed. Re-typing
+            // periodically makes it search again once the data is really there.
             const start = Date.now();
-            const checkInterval = setInterval(async () => {
-                const el = findSchoolByText(term);
+            let lastRetry = Date.now();
+            const checkInterval = setInterval(() => {
+                const el = findSchoolByText(searchTerm);
                 if (el) {
                     clearInterval(checkInterval);
-                    console.log('Kampus Auto Login: Found school item, clicking it');
-                    el.click();
-                    setTimeout(() => {
-                        const cb = document.querySelector('#continueButton');
-                        if (cb) cb.click();
-                    }, 300);
-                } else if (Date.now() - start > maxWait) {
-                    clearInterval(checkInterval);
-                    console.log('Kampus Auto Login: School item not found after', maxWait, 'ms');
-                    removeElementWithFade('kampus-autologin-overlay');
+                    console.log('Oikotie: Found school item, clicking it');
+                    selectSchoolAndContinue(el);
+                    return;
                 }
-            }, 400);
+
+                if (Date.now() - lastRetry >= SEARCH_RETRY_INTERVAL_MS) {
+                    lastRetry = Date.now();
+                    const input = document.querySelector('#searchschoolterm');
+                    if (input) {
+                        console.log('Oikotie: No results yet, re-running the school search');
+                        simulateSearchTyping(input, searchTerm);
+                    }
+                }
+
+                if (Date.now() - start > SCHOOL_SEARCH_TIMEOUT_MS) {
+                    clearInterval(checkInterval);
+                    console.log('Oikotie: School item not found after', SCHOOL_SEARCH_TIMEOUT_MS, 'ms');
+                    common.hideLoadingOverlay();
+                }
+            }, SCHOOL_POLL_INTERVAL_MS);
 
             return;
         }
 
         // Retry logic for unknown state
         if (result === 'unknown_state') {
-            let attempts = 0;
-            const maxAttempts = 10;
+            const started = Date.now();
             const interval = setInterval(async () => {
-                attempts++;
                 const retryResult = await handleMPassProxyStates();
-                if (retryResult !== 'unknown_state' || attempts >= maxAttempts) {
+                if (retryResult !== 'unknown_state') {
                     clearInterval(interval);
-                    if (attempts >= maxAttempts) {
-                        console.log('Kampus Auto Login: Could not handle mpass-proxy state after', maxAttempts, 'attempts');
-                        removeElementWithFade('kampus-autologin-overlay');
-                    } else {
-                        console.log('Kampus Auto Login: Successfully handled state on retry:', retryResult);
-                    }
+                    console.log('Oikotie: Successfully handled state on retry:', retryResult);
+                    return;
+                }
+                if (Date.now() - started > SCHOOL_SEARCH_TIMEOUT_MS) {
+                    clearInterval(interval);
+                    console.log('Oikotie: Could not handle mpass-proxy state in time');
+                    common.hideLoadingOverlay();
                 }
             }, 1500);
         }
     }
-    
-    // Check if we're already on the final destination
-    if (window.location.href.includes('sanomapro.fi') && !window.location.href.includes('mpass-proxy')) {
-        console.log('Kampus Auto Login: Already on final destination');
-        return;
-    }
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', waitAndTryClick);
-    } else {
-        waitAndTryClick();
-    }
-    
+
+    common.runWhenReady(waitAndTryClick);
 })();

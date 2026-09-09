@@ -11,42 +11,44 @@
             width: 100%;
             max-width: 420px;
             background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-radius: var(--oikotie-radius-card);
+            box-shadow: var(--oikotie-shadow);
             padding: 32px;
-            border: 1px solid #e9ecef;
+            border: 1px solid var(--oikotie-border);
         }
-        .setup-title { font-size: 22px; font-weight: 600; color: #643695; margin-bottom: 24px; text-align: center; }
+        .setup-brand { display: flex; align-items: center; justify-content: center; gap: 9px; margin-bottom: 24px; }
+        .setup-logo { width: 24px; height: 24px; flex: 0 0 auto; color: var(--oikotie-accent); }
+        .setup-title { font-size: 22px; font-weight: 600; color: var(--oikotie-accent); text-align: center; margin: 0; }
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-weight: 500; margin-bottom: 8px; color: #333; }
+        .form-group label { display: block; font-weight: 500; margin-bottom: 8px; color: var(--oikotie-text); }
         .form-group input, .form-group select {
             width: 100%;
             padding: 10px 12px;
             font-size: 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            border: 1px solid var(--oikotie-border);
+            border-radius: var(--oikotie-radius-control);
             background: #fff;
         }
         .form-group select { cursor: pointer; }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: #643695; box-shadow: 0 0 0 2px rgba(100, 54, 149, 0.2); }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--oikotie-accent); box-shadow: 0 0 0 2px var(--oikotie-accent-ring); }
         .form-group input:disabled {
-            background: #f8f9fa;
+            background: var(--oikotie-page);
             color: #8a939d;
             -webkit-text-fill-color: #8a939d;
             cursor: not-allowed;
         }
         .school-selector { position: relative; }
-        .school-input { width: 100%; padding: 10px 12px; font-size: 15px; border: 1px solid #ddd; border-radius: 6px; background: #fff; }
-        .school-input:focus { outline: none; border-color: #643695; box-shadow: 0 0 0 2px rgba(100, 54, 149, 0.2); }
+        .school-input { width: 100%; padding: 10px 12px; font-size: 15px; border: 1px solid var(--oikotie-border); border-radius: var(--oikotie-radius-control); background: #fff; }
+        .school-input:focus { outline: none; border-color: var(--oikotie-accent); box-shadow: 0 0 0 2px var(--oikotie-accent-ring); }
         .school-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
             right: 0;
             background: #fff;
-            border: 1px solid #ddd;
+            border: 1px solid var(--oikotie-border);
             border-top: none;
-            border-radius: 0 0 6px 6px;
+            border-radius: 0 0 var(--oikotie-radius-control) var(--oikotie-radius-control);
             max-height: 200px;
             overflow-y: auto;
             display: none;
@@ -59,13 +61,13 @@
             cursor: pointer;
             border-bottom: 1px solid #f0f0f0;
             font-size: 14px;
-            color: #333;
+            color: var(--oikotie-text);
         }
-        .school-option:hover { background: #f7f7fb; }
-        .school-option.selected { background: #e9e3f5; color: #643695; font-weight: 500; }
+        .school-option:hover { background: var(--oikotie-surface); }
+        .school-option.selected { background: var(--oikotie-accent-selected); color: var(--oikotie-accent); font-weight: 500; }
         .school-loading { padding: 12px; text-align: center; color: #999; font-size: 14px; }
         .school-error { padding: 12px; color: #dc3545; font-size: 13px; }
-        .school-error-message { display: none; padding: 10px 12px; margin-top: 6px; background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; border-radius: 6px; font-size: 13px; line-height: 1.4; }
+        .school-error-message { display: none; padding: 10px 12px; margin-top: 6px; background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; border-radius: var(--oikotie-radius-control); font-size: 13px; line-height: 1.4; }
         .school-error-message.show { display: block; }
         .school-support-message {
             display: none;
@@ -74,7 +76,7 @@
             background: #fff9ed;
             border: 1px solid #f2dfbd;
             color: #66512c;
-            border-radius: 6px;
+            border-radius: var(--oikotie-radius-control);
             font-size: 13px;
             line-height: 1.45;
         }
@@ -88,7 +90,7 @@
         .school-support-message a {
             display: inline-flex;
             margin-top: 6px;
-            color: #643695;
+            color: var(--oikotie-accent);
             font-weight: 600;
             text-decoration: none;
         }
@@ -100,15 +102,15 @@
             font-size: 15px;
             font-weight: 600;
             line-height: 1.4;
-            background: #643695;
+            background: var(--oikotie-accent);
             color: #fff;
             border: 1px solid transparent;
-            border-radius: 6px;
+            border-radius: var(--oikotie-radius-control);
             cursor: pointer;
             transition: background-color 0.2s ease, border-color 0.2s ease,
                 color 0.2s ease, box-shadow 0.2s ease;
         }
-        .btn-save:hover { background: #552a7d; }
+        .btn-save:hover { background: var(--oikotie-accent-hover); }
         .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
         .settings-extra {
             display: flex;
@@ -117,7 +119,7 @@
             gap: 12px;
             margin-top: 22px;
             padding-top: 20px;
-            border-top: 1px solid #e9ecef;
+            border-top: 1px solid var(--oikotie-border);
         }
         .settings-actions {
             display: flex;
@@ -133,10 +135,10 @@
             justify-content: center;
             flex: 0 0 auto;
             padding: 7px 10px;
-            border: 1px solid #d8cbe8;
-            border-radius: 6px;
-            background: #f3edf9;
-            color: #5f3b86;
+            border: 1px solid var(--oikotie-accent-tint-border);
+            border-radius: var(--oikotie-radius-control);
+            background: var(--oikotie-accent-tint);
+            color: var(--oikotie-accent);
             font-size: 11.5px;
             font-weight: 600;
             line-height: 1.4;
@@ -145,23 +147,36 @@
             white-space: nowrap;
             transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        .btn-report:hover { background: #e9def5; border-color: #cbb9df; }
-        .btn-report:focus { outline: none; box-shadow: 0 0 0 2px rgba(100, 54, 149, 0.2); }
+        .btn-report:hover { background: var(--oikotie-accent-selected); border-color: var(--oikotie-accent-tint-border); }
+        .btn-report:focus { outline: none; box-shadow: 0 0 0 2px var(--oikotie-accent-ring); }
         .version-label {
             flex: 1 1 auto;
             min-width: 0;
-            color: #6c757d;
+            color: var(--oikotie-muted);
             font-size: 12px;
             line-height: 1.4;
             text-align: left;
         }
-        .form-hint { font-size: 12px; color: #6c757d; margin-top: 6px; }
+        .version-sep { margin: 0 4px; color: var(--oikotie-muted); }
+        .source-link { color: var(--oikotie-accent); font-weight: 600; text-decoration: none; }
+        .source-link:hover { text-decoration: underline; }
+        .source-link:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--oikotie-accent-ring); border-radius: 3px; }
+        .form-hint { font-size: 12px; color: var(--oikotie-muted); margin-top: 6px; }
         .success-msg { display: none; }
     </style>
 </head>
 <body>
     <div class="setup-container">
-        <h1 class="setup-title" data-i18n="setupPageTitle">Asetukset</h1>
+        <div class="setup-brand">
+            <svg class="setup-logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+                <path d="M3.6 20.8 C4.2 7.4 19.5 3.6 26 11" fill="none" stroke="currentColor" stroke-width="3.3" stroke-linecap="round"/>
+                <polygon points="30.4,16.5 22.9,13.5 29.1,8.5" fill="currentColor"/>
+                <circle cx="5" cy="27.6" r="3" fill="currentColor"/>
+                <circle cx="14.5" cy="27.6" r="3" fill="currentColor"/>
+                <circle cx="24" cy="27.6" r="3" fill="currentColor"/>
+            </svg>
+            <h1 class="setup-title" data-i18n="setupPageTitle">Asetukset</h1>
+        </div>
         <div class="form-group">
             <label for="langSelect" data-i18n="setupLangLabel">Kieli</label>
             <select id="langSelect">
@@ -185,11 +200,32 @@
                 <input type="text" id="adfsDomain" data-i18n="setupDomainPlaceholder" data-i18n-attr="placeholder" required autocomplete="off">
                 <p class="form-hint" data-i18n="setupDomainHint">Osoite näkyy selaimen osoitepalkissa kun olet kunnan kirjautumissivulla.</p>
             </div>
+            <div class="form-group">
+                <label for="novaRole" data-i18n="setupNovaRoleLabel">Nova-käyttäjätyyppi</label>
+                <select id="novaRole">
+                    <option value="student" data-i18n="setupNovaRoleStudent">Opiskelija</option>
+                    <option value="pupil" data-i18n="setupNovaRolePupil">Oppilas</option>
+                    <option value="teacher" data-i18n="setupNovaRoleTeacher">Opettaja</option>
+                </select>
+                <p class="form-hint" data-i18n="setupNovaRoleHint"></p>
+            </div>
+            <div class="form-group">
+                <label for="studeoLevel" data-i18n="setupStudeoLevelLabel">Studeon kouluaste</label>
+                <select id="studeoLevel">
+                    <option value="secondary" data-i18n="setupStudeoLevelSecondary">Yläkoulu tai lukio</option>
+                    <option value="elementary" data-i18n="setupStudeoLevelElementary">Alakoulu</option>
+                </select>
+                <p class="form-hint" data-i18n="setupStudeoLevelHint"></p>
+            </div>
             <button type="submit" class="btn-save" id="saveBtn" data-i18n="setupSaveBtn">Tallenna</button>
             <p class="school-error-message form-error-message" id="successMsg"></p>
         </form>
         <div class="settings-extra">
-            <p class="version-label" id="versionDisplay">Kampus Auto Login v—</p>
+            <p class="version-label">
+                <span id="versionDisplay">Oikotie</span>
+                <span class="version-sep" aria-hidden="true">·</span>
+                <a class="source-link" href="https://github.com/Zawaer/oikotie" target="_blank" rel="noopener noreferrer" data-i18n="setupSourceCode">Lähdekoodi</a>
+            </p>
             <div class="settings-actions">
                 <a
                     class="btn-report"
@@ -208,6 +244,7 @@
             </div>
         </div>
     </div>
+    <script src="../scripts/services.js"></script>
     <script src="i18n.js"></script>
     <script src="preconfigured-school-domains.js"></script>
     <script src="setup.js"></script>
