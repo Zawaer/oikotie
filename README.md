@@ -54,9 +54,12 @@ npm install
 npm run build      # -> dist/chrome/ and dist/firefox/
 npm run package    # -> dist/releases/*.zip
 npm run build:icons   # PNG icons from ui/icons/*.svg
-npm run build:store   # store screenshots + promo tile -> dist/store/
+npm run build:store   # supporting store screenshots -> dist/store/
+npm run build:tiles   # real login-page captures for the promo collage -> dist/store/tiles/
 npm test           # see below
 ```
+
+The store listing images (Chrome hero, promo tile, marquee) are a small [Remotion](https://www.remotion.dev/) project in `promo/`, kept separate so its dependencies stay out of the extension. `cd promo && npm install`, then `npm run studio` to edit live or `npm run render` to write the PNGs to `dist/store/`.
 
 Load `dist/chrome` via **Load unpacked** at `chrome://extensions/` with Developer mode on. For Firefox, `npm run dev:firefox` opens a temporary profile with the extension loaded; `npm run lint:firefox` validates the build before an AMO upload.
 

@@ -14,7 +14,7 @@ export const Tile: React.FC<{ tagline: string; scale?: number }> = ({ tagline, s
       <Mark size={116 * scale} color="#fff" />
       <div>
         <div style={{ fontSize: 50 * scale, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>Oikotie</div>
-        <div style={{ marginTop: 10 * scale, fontSize: 17 * scale, fontWeight: 500, opacity: 0.92, lineHeight: 1.35, maxWidth: 260 * scale }}>{tagline}</div>
+        <div style={{ marginTop: 10 * scale, fontSize: 17 * scale, fontWeight: 500, opacity: 0.92, lineHeight: 1.35, maxWidth: 260 * scale, whiteSpace: 'pre-line' }}>{tagline}</div>
       </div>
     </div>
   </AbsoluteFill>
