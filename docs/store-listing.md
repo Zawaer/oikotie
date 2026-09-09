@@ -18,19 +18,17 @@ to live in the descriptions. AMO lets you edit the name; keep it `Oikotie`.
 
 **AMO summary (≤250) — as published:**
 
-> Automate the repetitive MPASSid login for Kampus, Nova and Studeo.
+> Automate the repetitive login process for Kampus, Nova and Studeo.
 
-**AMO description — as published.** Deliberately short: a store blurb, not the README. AMO renders `<a>` but not Markdown links.
+**AMO description — as published.** Deliberately a store blurb, not the README.
 
-> Tired of logging in to Kampus, Nova and Studeo again and again? Oikotie saves time by automating the repetitive parts of the login flow. It clicks through each service's MPASSid login, selects your school, and continues once your browser has filled in your saved credentials. Your password is never stored or sent anywhere. Previously published as Kampus Auto Login.
+> Tired of manually logging in to Kampus, Nova and Studeo again and again? Oikotie saves time by automating the repetitive parts of the login flow. It clicks through each service's MPASSid login, selects your school, and continues once your browser has filled in your saved credentials. Your password is never stored or sent anywhere.
 >
 > Looking for the Chrome version?
 >
-> If you are using Google Chrome or a Chromium-based browser, you can install `<a href="https://chromewebstore.google.com/detail/jnlidjmljocgjaapbnmfjbkcmghmogkd">Oikotie for Chrome</a>` directly from the official Chrome Web Store.
+> If you are using Google Chrome or a Chromium-based browser, you can install [Oikotie for Chrome](https://chromewebstore.google.com/detail/kampus-auto-login/jnlidjmljocgjaapbnmfjbkcmghmogkd) directly from the official Chrome Web Store.
 
-**Suomeksi (Chrome ≤132):**
-
-> Ohita kirjautumisruudut. MPASSid-kirjautuminen Kampukseen, Novaan ja Studeoon yhdellä klikkauksella.
+The Chrome link keeps the old `kampus-auto-login` slug on purpose: Chrome resolves by the ID alone and the slug is cosmetic, so it never needs updating.
 
 ---
 
