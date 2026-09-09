@@ -150,6 +150,9 @@
         .btn-report:hover { background: var(--oikotie-accent-selected); border-color: var(--oikotie-accent-tint-border); }
         .btn-report:focus { outline: none; box-shadow: 0 0 0 2px var(--oikotie-accent-ring); }
         .version-label {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
             flex: 1 1 auto;
             min-width: 0;
             color: var(--oikotie-muted);
@@ -157,8 +160,7 @@
             line-height: 1.4;
             text-align: left;
         }
-        .version-sep { margin: 0 4px; color: var(--oikotie-muted); }
-        .source-link { color: var(--oikotie-accent); font-weight: 600; text-decoration: none; }
+        .source-link { align-self: flex-start; color: var(--oikotie-accent); font-weight: 600; text-decoration: none; }
         .source-link:hover { text-decoration: underline; }
         .source-link:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--oikotie-accent-ring); border-radius: 3px; }
         .form-hint { font-size: 12px; color: var(--oikotie-muted); margin-top: 6px; }
@@ -223,7 +225,6 @@
         <div class="settings-extra">
             <p class="version-label">
                 <span id="versionDisplay">Oikotie</span>
-                <span class="version-sep" aria-hidden="true">·</span>
                 <a class="source-link" href="https://github.com/Zawaer/oikotie" target="_blank" rel="noopener noreferrer" data-i18n="setupSourceCode">Lähdekoodi</a>
             </p>
             <div class="settings-actions">
