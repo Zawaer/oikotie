@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Oikotie",
   "version": "3.0",
-  "description": "Automate the repetitive MPASSid login process for Kampus, Nova and Studeo.",
+  "description": "Automate the repetitive login process for Kampus, Nova and Studeo.",
   "permissions": [
     "storage"
   ],

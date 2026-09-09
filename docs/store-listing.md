@@ -14,7 +14,7 @@ to live in the descriptions. AMO lets you edit the name; keep it `Oikotie`.
 
 **Chrome (≤132):**
 
-> Skip the login screens. One-click MPASSid sign-in for Kampus, Nova and Studeo.
+> Automate the repetitive login process for Kampus, Nova and Studeo.
 
 **AMO summary (≤250) — as published:**
 

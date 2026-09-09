@@ -2,7 +2,7 @@
   "name": "oikotie",
   "version": "3.0.0",
   "private": true,
-  "description": "Oikotie - browser extension that automates the MPASSid login for Kampus, Nova and Studeo.",
+  "description": "Oikotie - browser extension that automates the repetitive login process for Kampus, Nova and Studeo.",
   "license": "GPL-3.0",
   "type": "module",
   "scripts": {
