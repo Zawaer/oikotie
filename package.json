@@ -8,6 +8,7 @@
   "scripts": {
     "build": "node scripts/build-variants.mjs",
     "build:icons": "node scripts/build-icons.mjs",
+    "build:store": "node scripts/build-store-assets.mjs",
     "package": "node scripts/package-variants.mjs",
     "test": "node tests/gating.test.mjs && node tests/service-options.test.mjs && node tests/login-flows.test.mjs",
     "test:gating": "node tests/gating.test.mjs",

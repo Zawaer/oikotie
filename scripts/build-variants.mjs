@@ -80,8 +80,15 @@ async function buildTarget(target) {
     await cp(source, destination, { recursive: true });
   }
 
-  await rm(path.join(outDir, 'scripts', 'build-variants.mjs'), { force: true });
-  await rm(path.join(outDir, 'scripts', 'package-variants.mjs'), { force: true });
+  // Everything the extension itself runs is .js; every build/dev tool in
+  // scripts/ is .mjs. Stripping by extension means a new tool cannot quietly
+  // end up shipped inside the package, which is what happened to build-icons.
+  const shippedScripts = await readdir(path.join(outDir, 'scripts'));
+  for (const name of shippedScripts) {
+    if (name.endsWith('.mjs')) {
+      await rm(path.join(outDir, 'scripts', name), { force: true });
+    }
+  }
 
   const outputManifestPath = path.join(outDir, 'manifest.json');
   await writeFile(outputManifestPath, `${JSON.stringify(mergedManifest, null, 2)}\n`, 'utf8');

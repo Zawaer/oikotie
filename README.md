@@ -53,6 +53,8 @@ It asks for access to the login pages of the supported services, plus the one sc
 npm install
 npm run build      # -> dist/chrome/ and dist/firefox/
 npm run package    # -> dist/releases/*.zip
+npm run build:icons   # PNG icons from ui/icons/*.svg
+npm run build:store   # store screenshots + promo tile -> dist/store/
 npm test           # see below
 ```
 
