@@ -1,0 +1,21 @@
+{
+  "name": "oikotie-promo",
+  "private": true,
+  "description": "Remotion project for the store listing images. Not part of the extension.",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion still ChromeHero ../dist/store/chrome-hero-1280x800.png && remotion still PromoTile ../dist/store/promo-tile-440x280.png && remotion still Marquee ../dist/store/marquee-1400x560.png",
+    "render:hero": "remotion still ChromeHero ../dist/store/chrome-hero-1280x800.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/google-fonts": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "typescript": "^5.4.0"
+  }
+}

@@ -62,6 +62,7 @@ async function buildTarget(target) {
     'manifests',
     'node_modules',
     'docs',
+    'promo',
     'tests',
     'package.json',
     'package-lock.json',
