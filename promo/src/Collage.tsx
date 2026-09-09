@@ -2,114 +2,93 @@ import React from 'react';
 import { Img, staticFile } from 'remotion';
 import { T } from './theme';
 
-// The bowtie: three service logins converge on the shared MPASSid + school
-// spine, then fan back out to three destinations. Arrow paths are derived from
-// the tile rectangles, so moving a tile moves its arrows.
-
-type Rect = { x: number; y: number; w: number; h: number };
-type Tile = { id: string; rect: Rect; src?: string; pos?: string; zoom?: number; label?: string };
+// A 2x2 collage of the real pages one login passes through, edge to edge, with
+// arrows drawn over them. Deliberately linear rather than a three-in/three-out
+// diagram: the tagline already names all three services, and drawing every
+// branch turned this into a flowchart. One flow, shown properly.
+//
+// Tiles are cropped to what identifies a page at this size - a coloured header,
+// a logo, a branded panel - not to its login form, which is white boxes and
+// unreadable text however much you zoom.
 
 export type CollageProps = {
   width: number;
   height: number;
-  /** Optional logged-in dashboard captures; placeholders are drawn when absent. */
-  destinations?: { kampus?: string; nova?: string; studeo?: string };
-  arrowColor?: string;
+  /** Swap in a logged-in dashboard capture for the final tile. */
+  destination?: string;
 };
 
-const col = (x: number, w: number, count: number, H: number, gap: number): Rect[] => {
-  const h = (H - gap * (count - 1)) / count;
-  return Array.from({ length: count }, (_, i) => ({ x, y: i * (h + gap), w, h }));
-};
+type Quad = { src: string; pos?: string; zoom?: number; device?: boolean };
 
-const midR = (r: Rect) => ({ x: r.x + r.w, y: r.y + r.h / 2 });
-const midL = (r: Rect) => ({ x: r.x, y: r.y + r.h / 2 });
-const midB = (r: Rect) => ({ x: r.x + r.w / 2, y: r.y + r.h });
-const midT = (r: Rect) => ({ x: r.x + r.w / 2, y: r.y });
+export const Collage: React.FC<CollageProps> = ({ width: W, height: H, destination }) => {
+  const w = W / 2, h = H / 2;
 
-// A slightly loose cubic between two points, for a drawn-by-hand feel.
-const curve = (a: { x: number; y: number }, b: { x: number; y: number }, pad = 10) => {
-  const dx = b.x - a.x, dy = b.y - a.y;
-  const horizontal = Math.abs(dx) > Math.abs(dy);
-  const ax = horizontal ? a.x + pad : a.x, ay = horizontal ? a.y : a.y + pad;
-  const bx = horizontal ? b.x - pad : b.x, by = horizontal ? b.y : b.y - pad;
-  const c1 = horizontal ? { x: ax + dx * 0.45, y: ay + dy * 0.05 } : { x: ax + dx * 0.05, y: ay + dy * 0.45 };
-  const c2 = horizontal ? { x: bx - dx * 0.35, y: by - dy * 0.1 } : { x: bx - dx * 0.1, y: by - dy * 0.35 };
-  return `M ${ax} ${ay} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${bx} ${by}`;
-};
-
-export const Collage: React.FC<CollageProps> = ({ width: W, height: H, destinations = {}, arrowColor = T.text }) => {
-  const gap = 18;
-  const colW = Math.round((W - 2 * 88) / 3); // three columns with 88px arrow lanes between
-  const xL = 0, xM = colW + 88, xR = 2 * (colW + 88);
-
-  const entries: Tile[] = col(xL, colW, 3, H, gap).map((rect, i) => ([
-    // Zoom in on the login card itself: a whole page at tile size is grey noise.
-    { id: 'kampus', src: 'tiles/kampus.png', pos: '50% 24%', zoom: 2.2 },
-    { id: 'nova', src: 'tiles/nova.png', pos: '60% 42%', zoom: 1.75 },
-    { id: 'studeo', src: 'tiles/studeo.png', pos: '24% 42%', zoom: 1.8 },
-  ][i] as Tile & { rect?: Rect })).map((t, i) => ({ ...t, rect: col(xL, colW, 3, H, gap)[i] }));
-
-  const spine: Tile[] = col(xM, colW, 2, H, gap).map((rect, i) => ([
-    { id: 'mpass', src: 'tiles/mpass.png', pos: '80% 44%', zoom: 1.45 },
-    { id: 'espoo', src: 'tiles/espoo.png', pos: '82% 46%', zoom: 1.3 },
-  ][i] as Tile)).map((t, i) => ({ ...t, rect: col(xM, colW, 2, H, gap)[i] }));
-
-  const dests: Tile[] = col(xR, colW, 3, H, gap).map((rect, i) => ([
-    { id: 'kampus-d', src: destinations.kampus, label: 'Kampus' },
-    { id: 'nova-d', src: destinations.nova, label: 'Nova' },
-    { id: 'studeo-d', src: destinations.studeo, label: 'Studeo' },
-  ][i] as Tile)).map((t, i) => ({ ...t, rect: col(xR, colW, 3, H, gap)[i] }));
-
-  const paths = [
-    ...entries.map((e) => curve(midR(e.rect), midL(spine[0].rect))),
-    curve(midB(spine[0].rect), midT(spine[1].rect)),
-    ...dests.map((d) => curve(midR(spine[1].rect), midL(d.rect))),
+  const quads: (Quad & { x: number; y: number })[] = [
+    // Sanoma Pro's green wordmark and the orange KIRJAUDU button.
+    { x: 0, y: 0, src: 'tiles/kampus.png', pos: '50% 13%', zoom: 1.45 },
+    // MPASSid's navy bar and the lilac "Viimeksi valitut" panel.
+    { x: w, y: 0, src: 'tiles/mpass.png', pos: '62% 26%', zoom: 1.1 },
+    // The extension itself as the payoff; replaced by `destination` when given.
+    // The popup is a 300px-wide UI, not a 1280px page: cover-cropping it puts it
+    // on screen at roughly four times the scale of the other tiles. Show it as a
+    // product shot instead - sized to match, bleeding off the bottom edge.
+    destination
+      ? { x: 0, y: h, src: destination, pos: '50% 30%', zoom: 1.1 }
+      : { x: 0, y: h, src: 'tiles/popup.png', device: true },
+    // Espoo's blue graphic and the ESPOO ESBO mark.
+    { x: w, y: h, src: 'tiles/espoo.png', pos: '52% 42%', zoom: 1.15 },
   ];
 
-  const tileStyle = (r: Rect): React.CSSProperties => ({
-    position: 'absolute', left: r.x, top: r.y, width: r.w, height: r.h,
-    borderRadius: 12, overflow: 'hidden', background: '#fff',
-    boxShadow: '0 10px 26px rgba(30,20,10,.18), 0 0 0 1px rgba(0,0,0,.05)',
-  });
-
-  const Placeholder: React.FC<{ label: string }> = ({ label }) => (
-    <div style={{
-      width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10,
-      background: `linear-gradient(160deg, ${T.surface}, ${T.warm})`, color: T.accentDeep,
-      fontWeight: 700, fontSize: 20, letterSpacing: -0.2,
-    }}>
-      <div style={{ width: 36, height: 36, borderRadius: 999, background: T.accent, color: '#fff', display: 'grid', placeItems: 'center', fontSize: 20 }}>✓</div>
-      {label}
-    </div>
-  );
+  // Flow: entry -> MPASSid -> school login -> in. Three arrows, each with its
+  // own weight and curvature so they read as drawn rather than plotted.
+  const arrows = [
+    { d: `M ${W * 0.30} ${H * 0.20} C ${W * 0.40} ${H * 0.13}, ${W * 0.46} ${H * 0.16}, ${W * 0.545} ${H * 0.235}`, sw: 4.6 },
+    { d: `M ${W * 0.93} ${H * 0.40} C ${W * 0.975} ${H * 0.50}, ${W * 0.93} ${H * 0.56}, ${W * 0.845} ${H * 0.615}`, sw: 4.2 },
+    { d: `M ${W * 0.62} ${H * 0.86} C ${W * 0.55} ${H * 0.93}, ${W * 0.47} ${H * 0.90}, ${W * 0.405} ${H * 0.815}`, sw: 4.6 },
+  ];
 
   return (
-    <div style={{ position: 'relative', width: W, height: H }}>
-      {[...entries, ...spine, ...dests].map((t) => (
-        <div key={t.id} style={tileStyle(t.rect)}>
-          {t.src
-            ? <Img src={staticFile(t.src)} style={{
-                width: '100%', height: '100%', objectFit: 'cover', objectPosition: t.pos ?? 'center', display: 'block',
-                // scale around the same focal point the crop uses, so zooming keeps the subject
-                transform: `scale(${t.zoom ?? 1})`, transformOrigin: t.pos ?? 'center',
+    <div style={{ position: 'relative', width: W, height: H, background: T.surface, overflow: 'hidden' }}>
+      {quads.map((q, i) => (
+        <div key={i} style={{
+          position: 'absolute', left: q.x, top: q.y, width: w, height: h, overflow: 'hidden',
+          background: q.device ? `linear-gradient(150deg, ${T.surface} 0%, ${T.warm} 130%)` : '#fff',
+        }}>
+          <Img src={staticFile(q.src)} style={q.device
+            ? {
+                position: 'absolute', left: '50%', top: h * 0.13, width: w * 0.46,
+                transform: 'translateX(-50%)', display: 'block',
+                borderRadius: 9, boxShadow: '0 14px 30px rgba(30,20,10,.26)',
+              }
+            : {
+                width: '100%', height: '100%', objectFit: 'cover', objectPosition: q.pos, display: 'block',
+                transform: `scale(${q.zoom ?? 1})`, transformOrigin: q.pos,
               }} />
-            : <Placeholder label={t.label ?? ''} />}
         </div>
       ))}
+
+      {/* hairlines, so the quadrants read as separate pages without gaps */}
+      <div style={{ position: 'absolute', left: w - 1, top: 0, width: 2, height: H, background: 'rgba(31,41,55,.10)' }} />
+      <div style={{ position: 'absolute', left: 0, top: h - 1, width: W, height: 2, background: 'rgba(31,41,55,.10)' }} />
+
       <svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
         <defs>
-          <marker id="head" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto-start-reverse">
-            <path d="M1 1 L9 5 L1 9 z" fill={arrowColor} />
+          <marker id="head" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+            <path d="M1 1 L9 5 L1 9 z" fill={T.text} />
           </marker>
-          {/* a whisper of displacement so the strokes read as drawn, not plotted */}
-          <filter id="hand" x="-5%" y="-5%" width="110%" height="110%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves={2} seed={7} result="n" />
-            <feDisplacementMap in="SourceGraphic" in2="n" scale={2.2} />
+          <filter id="hand" x="-6%" y="-6%" width="112%" height="112%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves={2} seed={11} result="n" />
+            <feDisplacementMap in="SourceGraphic" in2="n" scale={2.4} />
+          </filter>
+          <filter id="lift" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#fff" floodOpacity="0.9" />
           </filter>
         </defs>
-        <g fill="none" stroke={arrowColor} strokeWidth={4.5} strokeLinecap="round" strokeLinejoin="round" markerEnd="url(#head)" filter="url(#hand)">
-          {paths.map((d, i) => <path key={i} d={d} />)}
+        <g fill="none" stroke={T.text} strokeLinecap="round" strokeLinejoin="round"
+           markerEnd="url(#head)" filter="url(#hand)">
+          {arrows.map((a, i) => (
+            <path key={i} d={a.d} strokeWidth={a.sw} style={{ filter: 'url(#lift)' }} />
+          ))}
         </g>
       </svg>
     </div>

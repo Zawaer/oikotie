@@ -12,9 +12,9 @@ export const RemotionRoot: React.FC = () => (
         headline: 'Skip the login screens.',
         accentWord: 'Skip',
         tagline: TAGLINE,
-        // Drop logged-in captures into public/tiles and reference them here:
-        // destinations: { kampus: 'tiles/kampus-dash.png', nova: 'tiles/nova-dash.png', studeo: 'tiles/studeo-dash.png' },
-        destinations: {},
+        // Drop a logged-in dashboard capture into public/tiles to replace the
+        // final tile: destination: 'tiles/kampus-dash.png',
+        destination: undefined,
         tilt: { rotateY: -11, rotateX: 3.5, rotateZ: 1 },
       }} />
     <Still id="PromoTile" component={Tile} width={440} height={280}

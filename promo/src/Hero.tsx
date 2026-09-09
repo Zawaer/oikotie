@@ -11,12 +11,12 @@ export type HeroProps = {
   headline: string;
   accentWord: string;
   tagline: string;
-  destinations?: CollageProps['destinations'];
+  destination?: CollageProps['destination'];
   tilt: { rotateY: number; rotateX: number; rotateZ: number };
 };
 
 // 1280x800 Chrome Web Store screenshot: copy block left, tilted tablet right.
-export const Hero: React.FC<HeroProps> = ({ headline, accentWord, tagline, destinations, tilt }) => {
+export const Hero: React.FC<HeroProps> = ({ headline, accentWord, tagline, destination, tilt }) => {
   const [before, after] = headline.split(accentWord);
   const screenW = 660, screenH = 440, bezel = 16;
   return (
@@ -41,8 +41,8 @@ export const Hero: React.FC<HeroProps> = ({ headline, accentWord, tagline, desti
           transform: `rotateY(${tilt.rotateY}deg) rotateX(${tilt.rotateX}deg) rotateZ(${tilt.rotateZ}deg)`,
           boxShadow: '40px 64px 96px rgba(60,30,10,.32), inset 0 0 0 1px rgba(255,255,255,.07)',
         }}>
-          <div style={{ width: screenW, height: screenH, borderRadius: 16, overflow: 'hidden', background: '#f3efe9', padding: 22, boxSizing: 'border-box' }}>
-            <Collage width={screenW - 44} height={screenH - 44} destinations={destinations} />
+          <div style={{ width: screenW, height: screenH, borderRadius: 16, overflow: 'hidden', background: '#f3efe9' }}>
+            <Collage width={screenW} height={screenH} destination={destination} />
           </div>
         </div>
       </div>
