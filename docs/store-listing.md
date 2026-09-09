@@ -60,7 +60,11 @@ If your school isn't supported yet, you can still save it and request support fr
 
 **Open source** — GPL-3.0. Read the code, report bugs or suggest schools: https://github.com/Zawaer/oikotie
 
-*Oikotie is an unofficial extension. It is not affiliated with, endorsed by, or supported by Sanoma Pro, Otava, Studeo, MPASSid, or any school or municipality, and it is unrelated to the classifieds site at oikotie.fi.*
+**Cross-store link** (each listing points at the other; use the permanent URLs):
+- On AMO: *Looking for the Chrome version? If you use Google Chrome or another Chromium-based browser, install [Oikotie for Chrome](https://chromewebstore.google.com/detail/jnlidjmljocgjaapbnmfjbkcmghmogkd) from the Chrome Web Store.*
+- On Chrome: *Using Firefox or Zen? Install [Oikotie for Firefox](https://addons.mozilla.org/firefox/addon/2983122/) from Firefox Add-ons.*
+
+*Oikotie is an unofficial extension. It is not affiliated with, endorsed by, or supported by Sanoma Pro, Otava, Studeo, MPASSid, or any school or municipality, and it is unrelated to the classifieds site at oikotie.fi. Previously published as Kampus Auto Login.*
 
 ---
 
@@ -98,7 +102,7 @@ Jos kouluasi ei vielä tueta, voit silti tallentaa sen ja ehdottaa lisäämistä
 
 **Avoin lähdekoodi** — GPL-3.0. Lue koodi, ilmoita ongelmista tai ehdota kouluja: https://github.com/Zawaer/oikotie
 
-*Oikotie on epävirallinen laajennus. Se ei ole Sanoma Pron, Otavan, Studeon, MPASSid:n eikä minkään koulun tai kunnan tekemä, tukema tai hyväksymä, eikä se liity oikotie.fi-palveluun.*
+*Oikotie on epävirallinen laajennus. Se ei ole Sanoma Pron, Otavan, Studeon, MPASSid:n eikä minkään koulun tai kunnan tekemä, tukema tai hyväksymä, eikä se liity oikotie.fi-palveluun. Julkaistiin aiemmin nimellä Kampus Auto Login.*
 
 ---
 
@@ -152,7 +156,10 @@ Certify: does not sell data · does not use data for unrelated purposes · does 
 
 ## AMO — listing fields
 
-- **Categories:** Privacy & Security; Other (or "Web Development" is wrong — avoid).
+- **Categories:** Other. (Not Privacy & Security — it isn't a privacy tool, and reviewers dislike category padding.)
+- **Email:** leave empty; the Google Forms handle support and a listed address attracts spam.
+- **Description markup:** AMO accepts `<b> <i> <a> <ul> <ol> <li>` — use them for the headings and lists; plain Markdown is not rendered.
+- **Release notes:** the English notes above *without* the Chrome re-approval paragraph — Firefox grants new host permissions on update without disabling the add-on.
 - **Support site:** https://github.com/Zawaer/oikotie/issues
 - **Homepage:** https://github.com/Zawaer/oikotie
 - **License:** GNU General Public License v3.0
