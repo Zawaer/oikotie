@@ -599,7 +599,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     document.querySelectorAll('input[name="lang"]').forEach((input) => {
-        input.addEventListener('change', () => switchLanguage(getRadioValue('lang', 'en')));
+        input.addEventListener('change', () => switchLanguage(getRadioValue('lang', 'fi')));
     });
 
     form.addEventListener('submit', async function (e) {
