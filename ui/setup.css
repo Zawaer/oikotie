@@ -217,6 +217,11 @@ fieldset.form-section > .section-hint {
     gap: 8px;
 }
 
+/* .form-group's display: flex would otherwise override [hidden]. */
+.form-group[hidden] {
+    display: none;
+}
+
 .form-group > label {
     font-size: 14px;
     font-weight: 700;
@@ -324,9 +329,9 @@ fieldset.form-section > .section-hint {
 }
 
 .school-support-message {
-    border: 1px solid var(--oikotie-note-border);
-    background: var(--oikotie-note-bg);
-    color: var(--oikotie-note-text);
+    border: 1px solid var(--oikotie-border);
+    background: var(--oikotie-raised);
+    color: var(--oikotie-muted);
 }
 
 .school-error-message.show,

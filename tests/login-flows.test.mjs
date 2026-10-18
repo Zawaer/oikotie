@@ -8,12 +8,15 @@
 // Reaching the ADFS form with its username, password and submit fields present
 // is therefore the pass condition - everything before the credential wall.
 //
+// A school without a known AD FS address gets every step but that last one,
+// so its pass condition is leaving MPASSid for the school's own login page.
+//
 //   node tests/login-flows.test.mjs            # all services
 //   node tests/login-flows.test.mjs nova       # one service
 
 import {
     ROOT, COMMON_SCRIPTS, TEST_ADFS_DOMAIN,
-    launchBrowser, installExtensionStubs, injectScripts
+    launchBrowser, installExtensionStubs, injectScripts, defaultSettings
 } from './harness.mjs';
 
 // Mirrors manifest content_scripts, plus the ADFS script the background page
@@ -33,7 +36,13 @@ const CASES = [
     { name: 'Studeo', url: 'https://app.studeo.fi/' },
     // The marketing site is a different host, and its "Kirjaudu" link is the
     // way most people actually reach the app.
-    { name: 'Studeo-landing', url: 'https://www.studeo.fi/' }
+    { name: 'Studeo-landing', url: 'https://www.studeo.fi/' },
+    // A Helsinki school: in MPASSid, but with no AD FS address configured.
+    {
+        name: 'Kampus-unsupported', url: 'https://kampus.sanomapro.fi/',
+        settings: { schoolName: 'Alppilan lukio', schoolSupported: false, adfsDomain: '' },
+        expectSchoolLoginOnly: true
+    }
 ];
 
 const FLOW_TIMEOUT_MS = 75000;
@@ -56,7 +65,7 @@ for (const testCase of cases) {
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1400, height: 900 });
-    await installExtensionStubs(page);
+    await installExtensionStubs(page, { sync: defaultSettings(testCase.settings || {}) });
 
     const chain = [];
     page.on('framenavigated', (frame) => {
@@ -88,11 +97,19 @@ for (const testCase of cases) {
 
     const deadline = Date.now() + FLOW_TIMEOUT_MS;
     let reachedAdfs = false;
+    let schoolLoginHost = null;
     while (Date.now() < deadline) {
         await new Promise((resolve) => setTimeout(resolve, 1500));
         let current = '';
         try { current = page.url(); } catch (error) { break; }
         if (current.includes(TEST_ADFS_DOMAIN)) { reachedAdfs = true; break; }
+        if (testCase.expectSchoolLoginOnly && chain.some((url) => url.includes('mpass-proxy.csc.fi'))) {
+            const host = new URL(current).hostname;
+            if (host !== 'mpass-proxy.csc.fi' && !MATCHES.some((m) => m.host(host))) {
+                schoolLoginHost = host;
+                break;
+            }
+        }
     }
 
     console.log('\n   --- navigation chain ---');
@@ -102,7 +119,15 @@ for (const testCase of cases) {
     console.log(`\n   reached mpass-proxy : ${reachedMpass ? 'YES' : 'no'}`);
     console.log(`   reached school ADFS : ${reachedAdfs ? 'YES' : 'no'}`);
 
-    if (reachedAdfs) {
+    if (testCase.expectSchoolLoginOnly) {
+        console.log(`   school login page   : ${schoolLoginHost || 'no'}`);
+        if (schoolLoginHost) {
+            console.log('   RESULT: PASS - automated the flow up to the school\'s own login page');
+        } else {
+            console.log('   RESULT: FAIL - never left MPASSid for the school\'s login page');
+            failures++;
+        }
+    } else if (reachedAdfs) {
         // Landing on the ADFS URL is not the same as the form being rendered,
         // so give it a moment rather than judging the first paint.
         const readForm = () => page.evaluate(() => ({

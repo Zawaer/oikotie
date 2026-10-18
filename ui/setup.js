@@ -274,6 +274,17 @@ function updateUnsupportedSchoolMessage(schoolName, messageElement, lang, { sele
     hideUnsupportedSchoolMessage(messageElement);
 }
 
+// The login address always comes from the school list - a typed one is never
+// saved - so the field is only a read-only confirmation, shown once a
+// supported school is picked. An empty, editable box before that read as a
+// step the user had to fill in.
+function setDomainFieldVisible(domainInput, visible) {
+    const group = domainInput.closest('.form-group');
+    if (group) {
+        group.hidden = !visible;
+    }
+}
+
 function applySchoolDomainRules(schoolName, domainInput, { selected = false } = {}) {
     const lockedDomain = getLockedSchoolDomain(schoolName);
     const previousLockedDomain = domainInput.dataset.lockedDomain || '';
@@ -285,8 +296,11 @@ function applySchoolDomainRules(schoolName, domainInput, { selected = false } = 
         domainInput.required = true;
         domainInput.dataset.lockedDomain = lockedDomain;
         delete domainInput.dataset.unsupportedSchool;
+        setDomainFieldVisible(domainInput, true);
         return true;
     }
+
+    setDomainFieldVisible(domainInput, false);
 
     if (previousLockedDomain && normalizeDomain(domainInput.value) === previousLockedDomain) {
         domainInput.value = '';
@@ -301,8 +315,9 @@ function applySchoolDomainRules(schoolName, domainInput, { selected = false } = 
         return false;
     }
 
-    domainInput.disabled = false;
-    domainInput.required = true;
+    domainInput.value = '';
+    domainInput.disabled = true;
+    domainInput.required = false;
     delete domainInput.dataset.lockedDomain;
     delete domainInput.dataset.unsupportedSchool;
     return false;

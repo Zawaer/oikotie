@@ -58,11 +58,11 @@ From there it selects your school on MPASSid, hands off to your school's login p
 **Setup**
 
 1. Click the extension icon and open Settings.
-2. Pick your school from the list. If it's supported, the login address fills in automatically.
+2. Pick your school from the list. If it's fully supported, its login address fills in automatically.
 3. Choose your Nova user type and Studeo grade level.
 4. Save, and allow the permission prompt for your school's login address.
 
-If your school isn't supported yet, you can still save it and request support from the settings page.
+If your school isn't fully supported yet, Oikotie still takes you as far as your school's login page, where you sign in yourself. You can request full support from the settings page.
 
 **Open source** — GPL-3.0. Read the code, report bugs or suggest schools: https://github.com/Zawaer/oikotie
 
@@ -104,7 +104,7 @@ Sen jälkeen se valitsee koulusi MPASSid:ssä, siirtyy koulusi kirjautumissivull
 3. Valitse Nova-käyttäjätyyppi ja Studeon kouluaste.
 4. Tallenna ja hyväksy koulusi kirjautumisosoitteen käyttöoikeus.
 
-Jos kouluasi ei vielä tueta, voit silti tallentaa sen ja ehdottaa lisäämistä asetuksista.
+Jos koulullesi ei vielä ole täyttä tukea, Oikotie vie sinut silti koulusi kirjautumissivulle asti, jossa kirjaudut itse. Täyttä tukea voi ehdottaa asetuksista.
 
 **Avoin lähdekoodi** — GPL-3.0. Lue koodi, ilmoita ongelmista tai ehdota kouluja: https://github.com/Zawaer/oikotie
 

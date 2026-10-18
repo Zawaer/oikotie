@@ -45,6 +45,18 @@ const MPASS_PICKER = `<!doctype html><html lang="fi"><body>
   <input id="searchschoolterm" />
   <button id="continueButton">Jatka</button></body></html>`;
 
+// MPASSid remembers the last school picked in this browser. Here it is a
+// different school that merely shares the word "lukio" with the configured one.
+const MPASS_PICKER_OTHER_LAST_SCHOOL = `<!doctype html><html lang="fi"><body>
+  <div id="selectedList"><div><div class="listItem"><div id="last">Otaniemen lukio (Espoo)</div></div></div></div>
+  <input id="searchschoolterm" />
+  <button id="continueButton">Jatka</button>
+  <script>
+    document.getElementById('last').addEventListener('click', function () {
+      if (window.__recordSchoolClick) window.__recordSchoolClick(this.textContent.trim());
+    });
+  </script></body></html>`;
+
 // A populated list that does not contain the configured school. Picking any of
 // these would send the user to a stranger's municipality login.
 const MPASS_PICKER_WRONG_SCHOOLS = `<!doctype html><html lang="fi"><body>
@@ -110,10 +122,21 @@ const CASES = [
         expect: { overlay: false, schoolOverlay: false, flow: false, navigated: false }
     },
     {
-        name: 'Nova: unsupported school blocks automation',
+        // An unsupported school only lacks the last, AD FS step. Everything up
+        // to the school's login page still runs.
+        name: 'Nova: unsupported school still runs the service step',
         url: 'https://nova.otava.fi/', body: NOVA_ROLE_PICKER,
-        script: 'scripts/nova-content.js', settings: { schoolSupported: false },
-        expect: { overlay: false, schoolOverlay: false, flow: false, navigated: false }
+        script: 'scripts/nova-content.js',
+        settings: { schoolName: 'Alppilan lukio', schoolSupported: false, adfsDomain: '' },
+        expect: { overlay: true, schoolOverlay: false, flow: true, navigated: true }
+    },
+    {
+        name: 'MPASSid: unsupported school is still selected',
+        url: 'https://mpass-proxy.csc.fi/idp/profile/SAML2/Redirect/SSO', body: MPASS_PICKER,
+        script: 'scripts/mpass-content.js',
+        settings: { schoolName: 'Otaniemen lukio', schoolSupported: false, adfsDomain: '' },
+        local: { loginFlow: { service: 'nova', startedAt: Date.now() } },
+        expect: { overlay: true, schoolOverlay: false, searchFilled: true }
     },
     {
         name: 'Nova: no school configured prompts instead of guessing',
@@ -177,6 +200,15 @@ const CASES = [
         // It should search, find nothing that matches, and stop - never pick a
         // different school and never press Continue.
         expect: { searchFilled: true, schoolClicked: false, continueClicked: false }
+    },
+    {
+        name: 'MPASSid: a remembered school that only shares a word is not clicked',
+        url: 'https://mpass-proxy.csc.fi/idp/profile/SAML2/Redirect/SSO', body: MPASS_PICKER_OTHER_LAST_SCHOOL,
+        script: 'scripts/mpass-content.js',
+        settings: { schoolName: 'Alppilan lukio', schoolSupported: false, adfsDomain: '' },
+        local: { loginFlow: { service: 'kampus', startedAt: Date.now() } },
+        // It must skip the remembered school and search for the configured one.
+        expect: { schoolClicked: false, searchFilled: true }
     },
     {
         name: 'MPASSid: a stale flow flag has expired and is ignored',

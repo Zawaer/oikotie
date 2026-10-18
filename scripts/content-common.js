@@ -196,11 +196,14 @@
         }
     }
 
-    // Auto-login runs only when it is on globally, the school is supported, and
-    // this particular service has not been switched off.
+    // Auto-login runs when it is on globally and this particular service has
+    // not been switched off. It does not depend on the school being supported:
+    // the service and MPASSid steps work for any school MPASSid lists. Only the
+    // last step, on the school's own login page, needs a known AD FS address,
+    // and the background script registers that one for supported schools only.
     async function isAutomationEnabled(extensionApi, serviceId) {
         const settings = await getSettings(extensionApi);
-        if (!settings.autoLoginEnabled || !settings.schoolSupported) {
+        if (!settings.autoLoginEnabled) {
             return false;
         }
         if (serviceId && settings.servicesEnabled[serviceId] === false) {

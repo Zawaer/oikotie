@@ -28,18 +28,18 @@ These services log you out on their own schedule, so the same address might be a
 - Already signed in? Nothing happens — no spinner over a page you're using.
 - Only the landing pages redirect. Pricing, blog and support pages are left alone.
 - Reached MPASSid from a site Oikotie doesn't handle? It stays out of it.
-- School not set up, or not supported yet? It asks instead of guessing.
+- No school set up yet? It asks instead of guessing.
 - Each service can be switched off on its own from the popup.
 
 ## Setup
 
 1. Click the extension icon and open **Settings**.
 2. Start typing your school name and pick it from the list.
-3. If your school is supported, the login address fills in automatically.
+3. If your school is fully supported, its login address fills in automatically.
 4. Choose your **Nova user type** and **Studeo grade level** — these answer the questions those two services ask on the way to MPASSid.
 5. Save, and allow the permission prompt for your school's login address.
 
-If your school isn't supported yet, you can still save it and request support from the settings page.
+Every school MPASSid lists gets the service and MPASSid steps. Full support - pressing *Sign in* on the school's own login page once your browser fills in your credentials - needs the school's AD FS address, which Oikotie knows for Espoo so far. For any other school it stops at the school's login page and you sign in there yourself; you can request full support from the settings page.
 
 ## Privacy
 
