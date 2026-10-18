@@ -18,11 +18,11 @@ const iconsDir = path.join(rootDir, 'ui', 'icons');
 const CHROME_PATH = process.env.CHROME_PATH
     || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
-// Optical sizing: at 16px the standard tile leaves the mark too small for the
-// arc and arrowhead to separate, so that one size comes from the compact cut.
+// Optical sizing: at toolbar sizes the standard strokes are too thin for the
+// arc and chord to stay apart, so 16 and 32 come from the heavier compact cut.
 const SIZES = [
     { size: 16, source: 'icon-tile-compact.svg' },
-    { size: 32, source: 'icon-tile.svg' },
+    { size: 32, source: 'icon-tile-compact.svg' },
     { size: 48, source: 'icon-tile.svg' },
     { size: 64, source: 'icon-tile.svg' },
     { size: 96, source: 'icon-tile.svg' },

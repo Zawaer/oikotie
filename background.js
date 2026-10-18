@@ -130,6 +130,23 @@ extensionApi.runtime.onMessage.addListener((request, sender, sendResponse) => {
         return true;
     }
 
+    // The in-page overlays want the brand typeface, but a content script on a
+    // third-party page cannot load extension files without listing them as
+    // web-accessible, which would let any site detect Oikotie. Handing the
+    // bytes over the message channel keeps the font private.
+    if (request.action === 'getOverlayFont') {
+        sendAsyncResponse(sendResponse, async () => {
+            const response = await fetch(extensionApi.runtime.getURL('ui/fonts/schibsted-grotesk.woff2'));
+            const bytes = new Uint8Array(await response.arrayBuffer());
+            let binary = '';
+            for (let i = 0; i < bytes.length; i += 0x8000) {
+                binary += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+            }
+            return { font: btoa(binary) };
+        });
+        return true;
+    }
+
     if (request.action === 'syncAdfsAutomation') {
         sendAsyncResponse(sendResponse, async () => {
             await syncAdfsContentScript();

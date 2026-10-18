@@ -74,3 +74,5 @@ Oikotie is an unofficial extension. It is not affiliated with, endorsed by, or s
 ## License
 
 [GNU General Public License v3.0](LICENSE).
+
+The bundled typefaces in `ui/fonts/`, Schibsted Grotesk and JetBrains Mono, are under the SIL Open Font License 1.1; their license texts are alongside them.

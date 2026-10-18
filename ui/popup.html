@@ -4,24 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oikotie</title>
+    <link rel="stylesheet" href="brand.css">
     <link rel="stylesheet" href="popup.css">
 </head>
 <body class="popup-page">
     <div class="container">
         <header class="popup-header">
-            <!-- currentColor picks up the header's white text, so the mark
-                 needs no separate light/dark asset. -->
+            <!-- Same artwork as icons/icon.svg: an O whose corner is cut by
+                 the shortcut. -->
             <svg class="popup-logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-                <path d="M3.6 20.8 C4.2 7.4 19.5 3.6 26 11" fill="none" stroke="currentColor" stroke-width="3.3" stroke-linecap="round"/>
-                <polygon points="30.4,16.5 22.9,13.5 29.1,8.5" fill="currentColor"/>
-                <circle cx="5" cy="27.6" r="3" fill="currentColor"/>
-                <circle cx="14.5" cy="27.6" r="3" fill="currentColor"/>
-                <circle cx="24" cy="27.6" r="3" fill="currentColor"/>
+                <rect width="32" height="32" rx="7" fill="#0f2e27"/>
+                <path d="M16 7.5A8.5 8.5 0 1 0 24.5 16" fill="none" stroke="#f3f5f1" stroke-width="4" stroke-linecap="round"/>
+                <path d="M16 7.5L24.5 16" stroke="#c6f24e" stroke-width="4" stroke-linecap="round"/>
             </svg>
             <h1 data-i18n="popupTitle">Oikotie</h1>
         </header>
         <main class="content">
-            <section class="toggles-section">
+            <section class="main-card">
                 <label class="toggle-row">
                     <span class="toggle-info">
                         <span class="toggle-name" data-i18n="popupEnableToggle">Auto Login</span>
@@ -45,12 +44,9 @@
                 </label>
             </section>
 
-            <section class="services-section">
-                <div class="section-heading">
-                    <span class="section-title" data-i18n="popupServicesTitle">Services</span>
-                    <span class="section-desc" data-i18n="popupServicesDescription">Automate the login for these services</span>
-                </div>
-                <div id="serviceToggles"></div>
+            <section>
+                <span class="section-title eyebrow" data-i18n="popupServicesTitle">Services</span>
+                <div id="serviceToggles" class="services-card"></div>
             </section>
 
             <footer class="footer">
@@ -58,13 +54,14 @@
                     <span class="school-name" id="schoolDisplay">—</span>
                     <span class="school-domain" id="domainDisplay">—</span>
                 </div>
-                <div class="footer-actions">
-                    <button type="button" id="changeMunicipality" class="btn-settings" data-i18n="popupChangeSettings">Settings</button>
-                </div>
+                <button type="button" id="changeMunicipality" class="btn-settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+                    <span data-i18n="popupChangeSettings">Settings</span>
+                </button>
             </footer>
         </main>
     </div>
-    
+
     <script src="../scripts/services.js"></script>
     <script src="i18n.js"></script>
     <script src="popup.js"></script>

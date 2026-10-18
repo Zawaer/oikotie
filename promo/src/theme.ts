@@ -1,13 +1,12 @@
-// Mirrors the extension's design tokens (scripts/content-common.js, ui/popup.css).
+// Mirrors the extension's design tokens (ui/brand.css, scripts/content-common.js).
 export const T = {
-  accent: '#c2410c',
-  accentDeep: '#8c2f09',
-  text: '#1f2937',
-  body: '#495057',
-  muted: '#6c757d',
-  page: '#f9f8f6',
-  warm: '#fbe4d8',
-  surface: '#faf9f7',
-  border: '#e6e3df',
+  ink: '#0f2e27',
+  inkRaised: '#16413a',
+  inkMuted: '#a9c2b8',
+  signal: '#c6f24e',
+  text: '#0f2e27',
+  muted: '#4a5d57',
+  page: '#f3f5f1',
+  border: '#dce3de',
   bezel: '#141416',
 } as const;

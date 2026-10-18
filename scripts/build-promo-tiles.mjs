@@ -53,7 +53,7 @@ await plain('studeo','https://app.studeo.fi/auth/login');
 }
 // Popup at 2x.
 {
-  const p=await browser.newPage(); await p.setViewport({width:300,height:580,deviceScaleFactor:2});
+  const p=await browser.newPage(); await p.setViewport({width:300,height:100,deviceScaleFactor:2});
   await installExtensionStubs(p,{sync:{...defaultSettings(),language:'fi'}});
   await p.evaluateOnNewDocument((root)=>{chrome.runtime.getURL=(x)=>`file://${root}/${x}`;chrome.runtime.getManifest=()=>({version:'3.0'});},ROOT);
   await p.goto(`file://${ROOT}/ui/popup.html`,{waitUntil:'networkidle0'}); await settle(900);

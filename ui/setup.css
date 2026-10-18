@@ -1,0 +1,451 @@
+/* Settings page. Tokens and fonts come from brand.css. */
+
+.setup-page {
+    display: flex;
+    min-height: 100vh;
+    flex-wrap: wrap;
+}
+
+/* ---- Brand panel ------------------------------------------------------ */
+
+.brand-panel {
+    display: flex;
+    flex: 1 1 360px;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 48px;
+    padding: 48px;
+    background: var(--oikotie-ink);
+    color: var(--oikotie-page);
+}
+
+.brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-lockup svg {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+}
+
+.brand-lockup span {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+}
+
+.brand-copy {
+    display: flex;
+    max-width: 380px;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.brand-headline {
+    font-size: 44px;
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+}
+
+.brand-body {
+    color: var(--oikotie-ink-muted);
+    font-size: 15px;
+    line-height: 1.55;
+}
+
+.brand-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--oikotie-ink-raised);
+    color: #d4e2dc;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.brand-note svg {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    margin-top: 1px;
+    color: var(--oikotie-signal);
+}
+
+.brand-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    color: var(--oikotie-ink-muted);
+    font-size: 13px;
+}
+
+.brand-footer a {
+    color: var(--oikotie-page);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.brand-footer a:hover {
+    text-decoration: underline;
+}
+
+.brand-footer a:focus-visible {
+    outline: 2px solid var(--oikotie-signal);
+    outline-offset: 2px;
+    border-radius: 3px;
+}
+
+/* ---- Form ------------------------------------------------------------- */
+
+.form-column {
+    display: flex;
+    min-width: 0;
+    flex: 999 1 560px;
+    justify-content: center;
+    padding: 48px 24px;
+}
+
+.setup-form {
+    display: flex;
+    width: 100%;
+    max-width: 560px;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.form-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.setup-title {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+
+fieldset {
+    min-width: 0;
+    border: 0;
+}
+
+/* Language: a segmented control built from real radio buttons. */
+.segmented {
+    display: flex;
+    width: 210px;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 14px;
+    background: #e4eae6;
+}
+
+.segmented label {
+    position: relative;
+    flex: 1;
+}
+
+.segmented input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.segmented span {
+    display: flex;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    color: var(--oikotie-muted);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.segmented input:checked + span {
+    background: var(--oikotie-raised);
+    color: var(--oikotie-text);
+    box-shadow: 0 1px 2px rgba(15, 46, 39, 0.15);
+}
+
+.segmented input:focus-visible + span {
+    outline: 2px solid var(--oikotie-ink);
+    outline-offset: 1px;
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* A legend is not a flex item, so fieldset sections space their children
+   with margins instead of gap. */
+fieldset.form-section {
+    display: block;
+}
+
+fieldset.form-section > legend {
+    padding: 0;
+}
+
+fieldset.form-section > .section-hint {
+    margin: 8px 0 14px;
+}
+
+.section-hint {
+    margin-top: -6px;
+    color: var(--oikotie-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group > label {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.field {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid var(--oikotie-border);
+    border-radius: var(--oikotie-radius-control);
+    background: var(--oikotie-raised);
+    color: var(--oikotie-text);
+    font-family: inherit;
+    font-size: 15px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field:focus {
+    outline: none;
+    border-color: var(--oikotie-ink);
+    box-shadow: 0 0 0 3px var(--oikotie-ring);
+}
+
+.field.mono {
+    font-family: var(--oikotie-mono);
+    font-size: 14px;
+}
+
+.field:disabled {
+    background: var(--oikotie-sunken);
+    color: var(--oikotie-muted);
+    -webkit-text-fill-color: var(--oikotie-muted);
+    cursor: not-allowed;
+}
+
+.form-hint {
+    color: var(--oikotie-muted);
+    font-size: 12.5px;
+    line-height: 1.45;
+}
+
+/* School search */
+.school-selector {
+    position: relative;
+}
+
+.school-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: none;
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 6px;
+    border: 1px solid var(--oikotie-border);
+    border-radius: var(--oikotie-radius-control);
+    background: var(--oikotie-raised);
+    box-shadow: 0 12px 32px rgba(15, 46, 39, 0.14);
+}
+
+.school-dropdown.active {
+    display: block;
+}
+
+.school-option {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.school-option:hover {
+    background: var(--oikotie-page);
+}
+
+.school-option.selected {
+    background: var(--oikotie-ink);
+    color: var(--oikotie-page);
+    font-weight: 600;
+}
+
+.school-loading,
+.school-error {
+    padding: 10px 12px;
+    color: var(--oikotie-muted);
+    font-size: 14px;
+}
+
+.school-error-message,
+.school-support-message {
+    display: none;
+    padding: 12px 14px;
+    border-radius: var(--oikotie-radius-control);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.school-error-message {
+    border: 1px solid var(--oikotie-danger-border);
+    background: var(--oikotie-danger-bg);
+    color: var(--oikotie-danger-text);
+}
+
+.school-support-message {
+    border: 1px solid var(--oikotie-note-border);
+    background: var(--oikotie-note-bg);
+    color: var(--oikotie-note-text);
+}
+
+.school-error-message.show,
+.school-support-message.show {
+    display: block;
+}
+
+.school-support-message strong {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--oikotie-text);
+    font-weight: 700;
+}
+
+.school-support-message a {
+    display: inline-flex;
+    margin-top: 6px;
+    color: var(--oikotie-text);
+    font-weight: 700;
+}
+
+/* Radio cards for the Nova and Studeo questions */
+.option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.option-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 14px;
+    border: 1px solid var(--oikotie-border);
+    border-radius: 14px;
+    background: var(--oikotie-raised);
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.option-card:hover {
+    border-color: #b9c6bf;
+}
+
+.option-card input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.option-card:has(input:checked) {
+    border-color: var(--oikotie-ink);
+    box-shadow: inset 0 0 0 1px var(--oikotie-ink);
+}
+
+.option-card:has(input:focus-visible) {
+    outline: 2px solid var(--oikotie-ink);
+    outline-offset: 2px;
+}
+
+.option-title {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.option-detail {
+    color: var(--oikotie-muted);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Save */
+.btn-save {
+    display: flex;
+    height: 52px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--oikotie-signal);
+    color: var(--oikotie-ink);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-save svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-save:hover {
+    background: var(--oikotie-signal-hover);
+}
+
+.btn-save:focus-visible {
+    outline: 2px solid var(--oikotie-ink);
+    outline-offset: 2px;
+}
+
+.btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.form-error-message {
+    margin-top: -18px;
+}
+
+@media (max-width: 520px) {
+    .brand-panel {
+        padding: 32px 24px;
+    }
+
+    .brand-headline {
+        font-size: 34px;
+    }
+}

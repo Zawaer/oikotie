@@ -18,9 +18,9 @@ function showSuccessOverlay(message) {
     overlay.id = 'kampus-setup-success-overlay';
     overlay.style.cssText = 'position:fixed;inset:0;z-index:2147483646;';
     const wrap = document.createElement('div');
-    wrap.style.cssText = 'width:100vw;height:100vh;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;';
+    wrap.style.cssText = 'width:100vw;height:100vh;background:rgba(15,46,39,0.62);display:flex;align-items:center;justify-content:center;';
     const card = document.createElement('div');
-    card.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:16px;padding:28px 40px;background:#f7f7fb;color:#1f2937;border-radius:14px;box-shadow:0 12px 28px rgba(0,0,0,0.2);font-family:"Segoe UI",Roboto,Arial,sans-serif;box-sizing:border-box;';
+    card.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:16px;padding:28px 40px;background:var(--oikotie-raised);color:var(--oikotie-text);border-radius:20px;box-shadow:var(--oikotie-shadow);font-family:var(--oikotie-font);box-sizing:border-box;';
     const checkWrap = document.createElement('div');
     checkWrap.style.cssText = 'width:48px;height:48px;display:flex;align-items:center;justify-content:center;';
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -32,18 +32,18 @@ function showSuccessOverlay(message) {
     circle.setAttribute('cx', '24');
     circle.setAttribute('cy', '24');
     circle.setAttribute('r', '24');
-    circle.setAttribute('fill', '#28a745');
+    circle.setAttribute('fill', '#0f2e27');
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.setAttribute('d', 'M14 24l8 8 12-14');
-    path.setAttribute('stroke', '#fff');
-    path.setAttribute('stroke-width', '2.5');
+    path.setAttribute('stroke', '#c6f24e');
+    path.setAttribute('stroke-width', '3.5');
     path.setAttribute('stroke-linecap', 'round');
     path.setAttribute('stroke-linejoin', 'round');
     svg.appendChild(circle);
     svg.appendChild(path);
     checkWrap.appendChild(svg);
     const label = document.createElement('div');
-    label.style.cssText = 'font-size:15px;font-weight:500;letter-spacing:0.3px;';
+    label.style.cssText = 'font-size:16px;font-weight:700;';
     label.textContent = message;
     card.appendChild(checkWrap);
     card.appendChild(label);
@@ -58,6 +58,20 @@ function hideSuccessOverlay() {
         el.style.opacity = '0';
         el.style.transition = 'opacity 0.2s ease';
         setTimeout(() => el.remove(), 250);
+    }
+}
+
+// The language, Nova role and Studeo level pickers are radio groups.
+function getRadioValue(name, fallback) {
+    const checked = document.querySelector(`input[name="${name}"]:checked`);
+    return checked ? checked.value : fallback;
+}
+
+function setRadioValue(name, value) {
+    const input = document.querySelector(`input[name="${name}"][value="${value}"]`)
+        || document.querySelector(`input[name="${name}"]`);
+    if (input) {
+        input.checked = true;
     }
 }
 
@@ -522,10 +536,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const form = document.getElementById('setupForm');
     const saveBtn = document.getElementById('saveBtn');
     const successMsg = document.getElementById('successMsg');
-    const langSelect = document.getElementById('langSelect');
     const versionDisplay = document.getElementById('versionDisplay');
-    const novaRoleSelect = document.getElementById('novaRole');
-    const studeoLevelSelect = document.getElementById('studeoLevel');
     const services = globalThis.OikotieServices || {};
 
     function showFormError(message) {
@@ -539,7 +550,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     let currentLang = await getLanguage();
-    langSelect.value = currentLang;
+    setRadioValue('lang', currentLang);
 
     let storageResult = { schoolName: '', adfsDomain: '' };
     try {
@@ -550,8 +561,8 @@ document.addEventListener('DOMContentLoaded', async function () {
             studeoLevel: services.DEFAULT_STUDEO_LEVEL || 'secondary'
         });
         if (storageResult.adfsDomain) domainInput.value = storageResult.adfsDomain;
-        if (novaRoleSelect) novaRoleSelect.value = storageResult.novaRole;
-        if (studeoLevelSelect) studeoLevelSelect.value = storageResult.studeoLevel;
+        setRadioValue('novaRole', storageResult.novaRole);
+        setRadioValue('studeoLevel', storageResult.studeoLevel);
     } catch (e) {
         console.error('Error loading settings:', e);
     }
@@ -587,7 +598,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         );
     }
 
-    langSelect.addEventListener('change', () => switchLanguage(langSelect.value));
+    document.querySelectorAll('input[name="lang"]').forEach((input) => {
+        input.addEventListener('change', () => switchLanguage(getRadioValue('lang', 'en')));
+    });
 
     form.addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -617,8 +630,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                 schoolName,
                 adfsDomain: domain,
                 schoolSupported,
-                novaRole: novaRoleSelect ? novaRoleSelect.value : (services.DEFAULT_NOVA_ROLE || 'student'),
-                studeoLevel: studeoLevelSelect ? studeoLevelSelect.value : (services.DEFAULT_STUDEO_LEVEL || 'secondary')
+                novaRole: getRadioValue('novaRole', services.DEFAULT_NOVA_ROLE || 'student'),
+                studeoLevel: getRadioValue('studeoLevel', services.DEFAULT_STUDEO_LEVEL || 'secondary')
             });
             try {
                 await extensionApi.runtime.sendMessage({ action: 'syncAdfsAutomation' });

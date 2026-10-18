@@ -29,7 +29,7 @@
             cx: '70',
             cy: '70',
             fill: 'none',
-            stroke: 'var(--oikotie-accent)',
+            stroke: 'var(--oikotie-ink)',
             'stroke-width': strokeWidth
         });
         circle.appendChild(createSvgElement('animate', {
@@ -72,7 +72,7 @@
         }));
         svg.appendChild(createSvgElement('path', {
             d: 'M70 70L70 112L80 102L86 118L92 115.5L86 100L99 100L70 70Z',
-            fill: 'var(--oikotie-surface)',
+            fill: 'var(--oikotie-signal)',
             stroke: 'var(--oikotie-text)',
             'stroke-width': '2',
             'stroke-linejoin': 'round',
@@ -92,6 +92,9 @@
             }
 
             const { host, shadowRoot } = created;
+            if (typeof common.loadOverlayFont === 'function') {
+                common.loadOverlayFont();
+            }
             appendShadowStyles(shadowRoot, [
                 common.overlayHostRule(2147483646, 'none'),
                 ...common.OVERLAY_BASE_RULES,
@@ -110,11 +113,11 @@
                 '.info-wrap { position: static; display: inline-flex; align-items: center; margin-left: 5px; vertical-align: -3px; pointer-events: auto; }',
                 '.info-button { width: 18px; height: 18px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--oikotie-border); border-radius: 999px; background: var(--oikotie-raised); color: var(--oikotie-muted); font-family: var(--oikotie-font); font-size: 11px; font-weight: 700; line-height: 1; cursor: help; }',
                 '.info-button:hover { color: var(--oikotie-text); border-color: var(--oikotie-muted); }',
-                '.info-button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--oikotie-accent-ring); }',
+                '.info-button:focus-visible { outline: 2px solid var(--oikotie-ink); outline-offset: 2px; }',
                 // A light panel, like every other surface in the extension. It
                 // used to be a dark tooltip, which was the only inverted
                 // surface anywhere and read as belonging to the host page.
-                '.tooltip { position: absolute; bottom: calc(100% + 10px); left: 0; right: 0; padding: 12px 14px; border: 1px solid var(--oikotie-border); border-radius: var(--oikotie-radius-control); background: var(--oikotie-raised); color: var(--oikotie-body); font-family: var(--oikotie-font); font-size: 12.5px; font-weight: 400; line-height: 1.55; letter-spacing: 0; text-align: left; box-shadow: var(--oikotie-shadow); box-sizing: border-box; opacity: 0; transform: translateY(4px); transition: opacity 0.16s ease, transform 0.16s ease; pointer-events: none; visibility: hidden; }',
+                '.tooltip { position: absolute; bottom: calc(100% + 10px); left: 0; right: 0; padding: 12px 14px; border: 1px solid var(--oikotie-border); border-radius: var(--oikotie-radius-control); background: var(--oikotie-raised); color: var(--oikotie-muted); font-family: var(--oikotie-font); font-size: 12.5px; font-weight: 400; line-height: 1.55; letter-spacing: 0; text-align: left; box-shadow: var(--oikotie-shadow); box-sizing: border-box; opacity: 0; transform: translateY(4px); transition: opacity 0.16s ease, transform 0.16s ease; pointer-events: none; visibility: hidden; }',
                 // Two stacked triangles so the arrow keeps the panel's border.
                 '.tooltip::after { content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 7px solid transparent; border-top-color: var(--oikotie-border); }',
                 '.tooltip::before { content: ""; position: absolute; top: calc(100% - 1px); left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: var(--oikotie-raised); z-index: 1; }',
@@ -321,7 +324,7 @@
 
         const uiLanguage = await getLanguage();
         if (isFirefoxLikeBrowser) {
-            showLoadingOverlay(t(uiLanguage, 'commonLoggingInLabel'));
+            showLoadingOverlay(t(uiLanguage, 'commonLoggingInLabel'), { serviceId });
         } else {
             showContinueHint(
                 t(uiLanguage, 'adfsContinueTitle'),

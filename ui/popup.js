@@ -34,6 +34,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             const row = document.createElement('label');
             row.className = 'toggle-row';
 
+            const badge = document.createElement('span');
+            badge.className = 'service-badge';
+            badge.setAttribute('aria-hidden', 'true');
+            badge.textContent = service.name.charAt(0);
+
             const info = document.createElement('span');
             info.className = 'toggle-info';
             const name = document.createElement('span');
@@ -60,6 +65,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             switchWrap.appendChild(input);
             switchWrap.appendChild(slider);
 
+            row.appendChild(badge);
             row.appendChild(info);
             row.appendChild(switchWrap);
             serviceToggleContainer.appendChild(row);

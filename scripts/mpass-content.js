@@ -224,7 +224,7 @@
         }
 
         console.log('Oikotie: Auto-login is enabled, proceeding...');
-        common.showLoadingOverlay(t(uiLanguage, 'commonLoggingInLabel'));
+        common.showLoadingOverlay(t(uiLanguage, 'commonLoggingInLabel'), { serviceId });
 
         // First: try immediate presence of last-selected school (only if it matches configured school)
         const lastNow = document.querySelector('#selectedList > div > div.listItem > div');

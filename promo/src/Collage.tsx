@@ -48,17 +48,17 @@ export const Collage: React.FC<CollageProps> = ({ width: W, height: H, destinati
   ];
 
   return (
-    <div style={{ position: 'relative', width: W, height: H, background: T.surface, overflow: 'hidden' }}>
+    <div style={{ position: 'relative', width: W, height: H, background: T.page, overflow: 'hidden' }}>
       {quads.map((q, i) => (
         <div key={i} style={{
           position: 'absolute', left: q.x, top: q.y, width: w, height: h, overflow: 'hidden',
-          background: q.device ? `linear-gradient(150deg, ${T.surface} 0%, ${T.warm} 130%)` : '#fff',
+          background: q.device ? `linear-gradient(150deg, ${T.page} 0%, #dbe5df 130%)` : '#fff',
         }}>
           <Img src={staticFile(q.src)} style={q.device
             ? {
                 position: 'absolute', left: '50%', top: h * 0.13, width: w * 0.46,
                 transform: 'translateX(-50%)', display: 'block',
-                borderRadius: 9, boxShadow: '0 14px 30px rgba(30,20,10,.26)',
+                borderRadius: 9, boxShadow: '0 14px 30px rgba(4,20,16,.26)',
               }
             : {
                 width: '100%', height: '100%', objectFit: 'cover', objectPosition: q.pos, display: 'block',
@@ -68,8 +68,8 @@ export const Collage: React.FC<CollageProps> = ({ width: W, height: H, destinati
       ))}
 
       {/* hairlines, so the quadrants read as separate pages without gaps */}
-      <div style={{ position: 'absolute', left: w - 1, top: 0, width: 2, height: H, background: 'rgba(31,41,55,.10)' }} />
-      <div style={{ position: 'absolute', left: 0, top: h - 1, width: W, height: 2, background: 'rgba(31,41,55,.10)' }} />
+      <div style={{ position: 'absolute', left: w - 1, top: 0, width: 2, height: H, background: 'rgba(15,46,39,.10)' }} />
+      <div style={{ position: 'absolute', left: 0, top: h - 1, width: W, height: 2, background: 'rgba(15,46,39,.10)' }} />
 
       <svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
         <defs>

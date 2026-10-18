@@ -25,29 +25,34 @@
     // Overlay design tokens
     //
     // The overlays live inside shadow roots on pages we do not control, so they
-    // cannot inherit anything and every value has to be restated. Keeping them
-    // in one place is what stops the three overlays drifting apart.
+    // cannot inherit anything and every value has to be restated. These mirror
+    // ui/brand.css; keeping them in one place is what stops the overlays
+    // drifting apart.
     //
-    // The font stack matters more than it looks: leaving out -apple-system
-    // renders the overlays in a different typeface from the popup on macOS.
+    // "Oikotie Grotesk" is the brand face, registered on the page by
+    // loadOverlayFont(). Until it arrives - or if it never does - the system
+    // stack takes over. Leaving out -apple-system there renders the overlays
+    // in a different fallback typeface from the popup on macOS.
     // ---------------------------------------------------------------------
 
+    const OVERLAY_FONT_FAMILY = 'Oikotie Grotesk';
+
     const OVERLAY_TOKENS = [
-        '--oikotie-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;',
-        '--oikotie-accent: #c2410c;',
-        '--oikotie-accent-hover: #a5370a;',
-        '--oikotie-accent-active: #8c2f09;',
-        '--oikotie-accent-ring: rgba(194, 65, 12, 0.25);',
-        '--oikotie-text: #1f2937;',
-        '--oikotie-body: #495057;',
-        '--oikotie-muted: #6c757d;',
-        '--oikotie-surface: #faf9f7;',
+        `--oikotie-font: "${OVERLAY_FONT_FAMILY}", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;`,
+        '--oikotie-ink: #0f2e27;',
+        '--oikotie-ink-hover: #1a4038;',
+        '--oikotie-signal: #c6f24e;',
+        '--oikotie-text: #0f2e27;',
+        '--oikotie-muted: #4a5d57;',
+        '--oikotie-page: #f3f5f1;',
         '--oikotie-raised: #ffffff;',
-        '--oikotie-border: #e6e3df;',
-        '--oikotie-scrim: rgba(0, 0, 0, 0.55);',
-        '--oikotie-radius-card: 14px;',
-        '--oikotie-radius-control: 8px;',
-        '--oikotie-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);'
+        '--oikotie-border: #dce3de;',
+        '--oikotie-pending: #c3cfc9;',
+        '--oikotie-ring: rgba(15, 46, 39, 0.14);',
+        '--oikotie-scrim: rgba(15, 46, 39, 0.62);',
+        '--oikotie-radius-card: 20px;',
+        '--oikotie-radius-control: 12px;',
+        '--oikotie-shadow: 0 24px 60px rgba(4, 20, 16, 0.35);'
     ].join(' ');
 
     function overlayHostRule(zIndex, pointerEvents = 'auto') {
@@ -58,13 +63,12 @@
     // overlay is appended after these.
     const OVERLAY_BASE_RULES = Object.freeze([
         '.overlay { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; background: var(--oikotie-scrim); box-sizing: border-box; }',
-        '.card { box-sizing: border-box; display: flex; flex-direction: column; align-items: center; background: var(--oikotie-surface); color: var(--oikotie-text); border-radius: var(--oikotie-radius-card); box-shadow: var(--oikotie-shadow); font-family: var(--oikotie-font); text-align: center; }',
-        '.title { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.35; color: var(--oikotie-text); }',
-        '.description { margin: 0; font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--oikotie-body); }',
-        '.button { width: 100%; padding: 11px 16px; border: 1px solid transparent; border-radius: var(--oikotie-radius-control); background: var(--oikotie-accent); color: #fff; font-family: var(--oikotie-font); font-size: 15px; font-weight: 600; line-height: 1.4; cursor: pointer; transition: background-color 0.2s ease, box-shadow 0.2s ease; }',
-        '.button:hover { background: var(--oikotie-accent-hover); }',
-        '.button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--oikotie-accent-ring); }',
-        '.button:active { background: var(--oikotie-accent-active); }'
+        '.card { box-sizing: border-box; display: flex; flex-direction: column; align-items: center; background: var(--oikotie-raised); color: var(--oikotie-text); border-radius: var(--oikotie-radius-card); box-shadow: var(--oikotie-shadow); font-family: var(--oikotie-font); text-align: center; -webkit-font-smoothing: antialiased; }',
+        '.title { margin: 0; font-size: 17px; font-weight: 800; line-height: 1.3; letter-spacing: -0.01em; color: var(--oikotie-text); }',
+        '.description { margin: 0; font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--oikotie-muted); }',
+        '.button { box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; height: 46px; padding: 0 16px; border: 0; border-radius: var(--oikotie-radius-control); background: var(--oikotie-ink); color: var(--oikotie-page); font-family: var(--oikotie-font); font-size: 15px; font-weight: 700; line-height: 1; cursor: pointer; transition: background-color 0.15s ease; }',
+        '.button:hover { background: var(--oikotie-ink-hover); }',
+        '.button:focus-visible { outline: 2px solid var(--oikotie-ink); outline-offset: 2px; }'
     ]);
 
     // Keyword weights for locating a service's MPASSid entry point when it has
@@ -500,7 +504,7 @@
     // later. On a slow connection - or when several tabs opened from a bookmark
     // folder fight over bandwidth - that can take well over twenty seconds, so
     // the budget is generous and driven by both a MutationObserver and a poll.
-    // `overlayMessage` + `overlayMode` control the "Logging in..." spinner:
+    // `overlayMessage` + `overlayMode` control the "Logging in…" overlay:
     //
     //   'immediate' - show it right away. Correct on pages that only ever exist
     //                 when logged out, such as a dedicated login page.
@@ -728,36 +732,187 @@
         return style;
     }
 
-    function showLoadingOverlay(message, { id = LOADING_OVERLAY_ID, zIndex = 2147483646 } = {}) {
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+
+    function createSvg(tagName, attributes) {
+        const element = document.createElementNS(SVG_NS, tagName);
+        for (const [name, value] of Object.entries(attributes || {})) {
+            element.setAttribute(name, String(value));
+        }
+        return element;
+    }
+
+    // The Oikotie mark, as in ui/icons/icon.svg: an O whose corner is cut by
+    // the shortcut.
+    function createMarkSvg(size) {
+        const svg = createSvg('svg', { width: size, height: size, viewBox: '0 0 32 32', 'aria-hidden': 'true' });
+        svg.appendChild(createSvg('rect', { width: 32, height: 32, rx: 8, fill: '#0f2e27' }));
+        svg.appendChild(createSvg('path', { d: 'M16 7.5A8.5 8.5 0 1 0 24.5 16', fill: 'none', stroke: '#f3f5f1', 'stroke-width': 4, 'stroke-linecap': 'round' }));
+        svg.appendChild(createSvg('path', { d: 'M16 7.5L24.5 16', stroke: '#c6f24e', 'stroke-width': 4, 'stroke-linecap': 'round' }));
+        return svg;
+    }
+
+    function createStrokeIcon(pathData, { size = 18, stroke = 'currentColor', strokeWidth = 2 } = {}) {
+        const svg = createSvg('svg', {
+            width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke,
+            'stroke-width': strokeWidth, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true'
+        });
+        for (const d of [].concat(pathData)) {
+            svg.appendChild(createSvg('path', { d }));
+        }
+        return svg;
+    }
+
+    // Registers the brand face for the overlays. A FontFace added to the
+    // document also applies inside shadow roots. The bytes come from the
+    // background script (see getOverlayFont there) and are handed over as an
+    // ArrayBuffer, so neither the page's CSP nor web_accessible_resources is
+    // involved. Best effort: on any failure the overlays keep the system stack.
+    let overlayFontRequested = false;
+
+    function loadOverlayFont() {
+        if (overlayFontRequested) {
+            return;
+        }
+        overlayFontRequested = true;
+
+        try {
+            // chrome.* takes callbacks in both Chrome and Firefox; browser.*
+            // in Firefox would ignore one.
+            const api = globalThis.chrome || globalThis.browser;
+            if (!api?.runtime?.sendMessage || typeof FontFace !== 'function' || !document.fonts) {
+                return;
+            }
+            api.runtime.sendMessage({ action: 'getOverlayFont' }, (response) => {
+                try {
+                    if (api.runtime.lastError || !response?.font) {
+                        return;
+                    }
+                    const binary = atob(response.font);
+                    const bytes = new Uint8Array(binary.length);
+                    for (let i = 0; i < binary.length; i++) {
+                        bytes[i] = binary.charCodeAt(i);
+                    }
+                    const face = new FontFace(OVERLAY_FONT_FAMILY, bytes.buffer, { weight: '400 900' });
+                    face.load().then((loaded) => document.fonts.add(loaded)).catch(() => {});
+                } catch (e) {}
+            });
+        } catch (e) {}
+    }
+
+    // Where the current page sits in the service -> MPASSid -> school login
+    // route. Null when the service is unknown, in which case the overlay shows
+    // no trail rather than a wrong one.
+    function getLoginTrail(serviceId) {
+        const host = (window.location.hostname || '').toLowerCase();
+        const pageService = typeof services.getServiceForHost === 'function'
+            ? services.getServiceForHost(host)
+            : null;
+
+        let activeStep = 2;
+        if (host === services.MPASS_PROXY_HOST) {
+            activeStep = 1;
+        } else if (pageService) {
+            activeStep = 0;
+        }
+
+        const service = (services.SERVICES || {})[serviceId] || pageService;
+        if (!service) {
+            return null;
+        }
+        return { activeStep, labels: [service.name, 'MPASSid', 'Koulu'] };
+    }
+
+    // `serviceId` names the flow on pages that do not belong to a service
+    // (MPASSid, the school login); on a service's own pages it is inferred.
+    function showLoadingOverlay(message, { id = LOADING_OVERLAY_ID, zIndex = 2147483646, serviceId = null } = {}) {
         try {
             const created = createShadowHost(id, { zIndex });
             if (!created) {
                 return false;
             }
+            loadOverlayFont();
 
             const { host, shadowRoot } = created;
             appendShadowStyles(shadowRoot, [
                 overlayHostRule(zIndex),
                 ...OVERLAY_BASE_RULES,
-                '.card { gap: 16px; padding: 28px 40px; }',
-                '.spinner { width: 28px; height: 28px; border: 3px solid rgba(0, 0, 0, 0.12); border-top-color: var(--oikotie-accent); border-radius: 50%; animation: oikotie-spin 0.7s linear infinite; }',
-                '.label { font-size: 15px; font-weight: 500; letter-spacing: 0.2px; color: var(--oikotie-text); }',
-                '@keyframes oikotie-spin { to { transform: rotate(360deg); } }',
-                '@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } }'
+                '.card { width: min(380px, calc(100vw - 32px)); gap: 22px; padding: 24px 24px 26px; align-items: stretch; text-align: left; }',
+                '.card.compact { width: auto; padding: 20px 26px 20px 20px; }',
+                '.head { display: flex; align-items: center; gap: 12px; }',
+                '.head svg { display: block; flex: 0 0 auto; }',
+                '.trail { display: flex; align-items: flex-start; }',
+                '.step { display: flex; flex: 0 0 auto; flex-direction: column; align-items: center; gap: 8px; width: 76px; }',
+                '.dot { box-sizing: border-box; display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--oikotie-raised); }',
+                '.done .dot { background: var(--oikotie-ink); }',
+                '.active .dot { border: 3px solid var(--oikotie-ink); }',
+                '.pending .dot { border: 2px solid var(--oikotie-pending); }',
+                '.step-label { max-width: 76px; overflow: hidden; color: var(--oikotie-text); font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }',
+                '.pending .step-label { color: var(--oikotie-muted); font-weight: 600; }',
+                '.link { flex: 1; height: 3px; margin-top: 10px; border-radius: 2px; }',
+                '.link.done { background: var(--oikotie-ink); }',
+                '.link.next, .link.later { background-image: radial-gradient(circle, var(--dots) 1.5px, transparent 1.6px); background-size: 6px 3px; background-repeat: repeat-x; }',
+                '.link.next { --dots: #9db1aa; animation: oikotie-march 0.6s linear infinite; }',
+                '.link.later { --dots: var(--oikotie-pending); }',
+                '@keyframes oikotie-march { to { background-position: 6px 0; } }',
+                '@media (prefers-reduced-motion: reduce) { .link.next { animation: none; } }'
             ]);
 
             const overlay = document.createElement('div');
             overlay.className = 'overlay';
             const card = document.createElement('div');
             card.className = 'card';
-            const spinner = document.createElement('div');
-            spinner.className = 'spinner';
-            const label = document.createElement('div');
-            label.className = 'label';
-            label.textContent = message;
+            card.setAttribute('role', 'status');
 
-            card.appendChild(spinner);
-            card.appendChild(label);
+            const head = document.createElement('div');
+            head.className = 'head';
+            const label = document.createElement('div');
+            label.className = 'title';
+            label.textContent = message;
+            head.appendChild(createMarkSvg(32));
+            head.appendChild(label);
+            card.appendChild(head);
+
+            const trail = getLoginTrail(serviceId);
+            if (trail) {
+                const row = document.createElement('div');
+                row.className = 'trail';
+                row.setAttribute('aria-hidden', 'true');
+                trail.labels.forEach((text, index) => {
+                    if (index > 0) {
+                        const link = document.createElement('div');
+                        const linkIndex = index - 1;
+                        link.className = `link ${linkIndex < trail.activeStep ? 'done' : linkIndex === trail.activeStep ? 'next' : 'later'}`;
+                        row.appendChild(link);
+                    }
+                    const state = index < trail.activeStep ? 'done' : index === trail.activeStep ? 'active' : 'pending';
+                    const step = document.createElement('div');
+                    step.className = `step ${state}`;
+                    const dot = document.createElement('div');
+                    dot.className = 'dot';
+                    if (state === 'done') {
+                        dot.appendChild(createStrokeIcon('m5 12 5 5 9-10', { size: 12, stroke: '#c6f24e', strokeWidth: 3.5 }));
+                    }
+                    const stepLabel = document.createElement('div');
+                    stepLabel.className = 'step-label';
+                    stepLabel.textContent = text;
+                    step.appendChild(dot);
+                    step.appendChild(stepLabel);
+                    row.appendChild(step);
+
+                    // The last step is the only translated one; i18n.js is
+                    // loaded ahead of this script in every content script.
+                    if (index === trail.labels.length - 1 && typeof getLanguage === 'function') {
+                        getLanguage().then((lang) => {
+                            stepLabel.textContent = t(lang, 'commonStepSchool');
+                        }).catch(() => {});
+                    }
+                });
+                card.appendChild(row);
+            } else {
+                card.classList.add('compact');
+            }
+
             overlay.appendChild(card);
             shadowRoot.appendChild(overlay);
             document.documentElement.appendChild(host);
@@ -781,17 +936,19 @@
             if (!created) {
                 return false;
             }
+            loadOverlayFont();
 
             const { host, shadowRoot } = created;
             appendShadowStyles(shadowRoot, [
                 overlayHostRule(2147483647),
                 ...OVERLAY_BASE_RULES,
-                '.card { position: relative; width: min(380px, calc(100vw - 32px)); gap: 12px; padding: 28px 32px; }',
-                '.close-button { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 999px; background: transparent; color: var(--oikotie-muted); font-family: var(--oikotie-font); font-size: 22px; line-height: 1; cursor: pointer; }',
-                '.close-button:hover { background: rgba(0, 0, 0, 0.06); color: var(--oikotie-text); }',
-                '.close-button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--oikotie-accent-ring); }',
-                '.title { font-size: 18px; color: var(--oikotie-accent); }',
-                '.button { margin-top: 4px; }'
+                '.card { position: relative; width: min(380px, calc(100vw - 32px)); gap: 12px; padding: 28px 28px 24px; align-items: flex-start; text-align: left; }',
+                '.close-button { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; padding: 0; border: none; border-radius: 999px; background: transparent; color: var(--oikotie-muted); cursor: pointer; }',
+                '.close-button:hover { background: rgba(15, 46, 39, 0.06); color: var(--oikotie-text); }',
+                '.close-button:focus-visible { outline: 2px solid var(--oikotie-ink); outline-offset: 2px; }',
+                '.icon { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: var(--oikotie-page); color: var(--oikotie-ink); }',
+                '.title { font-size: 19px; }',
+                '.button { margin-top: 8px; }'
             ]);
 
             const overlay = document.createElement('div');
@@ -802,8 +959,11 @@
             closeButton.type = 'button';
             closeButton.className = 'close-button';
             closeButton.setAttribute('aria-label', 'Close');
-            closeButton.textContent = '×';
+            closeButton.appendChild(createStrokeIcon('M6 6l12 12M18 6 6 18', { strokeWidth: 2.2 }));
             closeButton.addEventListener('click', hideSchoolRequiredOverlay);
+            const icon = document.createElement('div');
+            icon.className = 'icon';
+            icon.appendChild(createStrokeIcon(['M3 10 12 5l9 5-9 5-9-5Z', 'M7 12v4c0 1.5 2.2 3 5 3s5-1.5 5-3v-4'], { size: 22 }));
             const title = document.createElement('div');
             title.className = 'title';
             title.textContent = titleMessage;
@@ -813,7 +973,10 @@
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'button';
-            button.textContent = actionLabel;
+            const buttonLabel = document.createElement('span');
+            buttonLabel.textContent = actionLabel;
+            button.appendChild(buttonLabel);
+            button.appendChild(createStrokeIcon('M5 12h14M13 6l6 6-6 6', { size: 16, stroke: '#c6f24e', strokeWidth: 2.5 }));
             button.addEventListener('click', () => {
                 try {
                     extensionApi.runtime.sendMessage({ action: 'openSetupPage' }, () => {
@@ -827,6 +990,7 @@
             });
 
             card.appendChild(closeButton);
+            card.appendChild(icon);
             card.appendChild(title);
             card.appendChild(description);
             card.appendChild(button);
@@ -887,6 +1051,8 @@
         hideLoadingOverlay,
         hideSchoolRequiredOverlay,
         showSchoolRequiredOverlay,
+        loadOverlayFont,
+        createMarkSvg,
 
         runWhenReady
     });
