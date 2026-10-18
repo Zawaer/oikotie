@@ -61,13 +61,23 @@
     }
 
     // Find school item by text content (matches configured school name)
+    // Whether a school entry on the page is the configured school. Every word
+    // of the configured name has to appear: matching on any single word made
+    // "Alppilan lukio" accept "Otaniemen lukio", because both contain "lukio".
+    function matchesConfiguredSchool(text, searchTerm) {
+        const haystack = (text || '').toLowerCase();
+        const term = (searchTerm || '').trim().toLowerCase();
+        if (!term) {
+            return false;
+        }
+        const termParts = term.split(/\s+/).filter(Boolean);
+        return haystack.includes(term) || termParts.every((part) => haystack.includes(part));
+    }
+
     function findSchoolByText(searchTerm) {
         const items = document.querySelectorAll('[id^="item-"], .listItem, .schoolItem, li, div[role="option"]');
-        const term = (searchTerm || '').toLowerCase();
-        const termParts = term.split(/\s+/).filter(Boolean);
         for (const item of items) {
-            const text = (item.textContent || '').toLowerCase();
-            if (termParts.every((p) => text.includes(p)) || text.includes(term)) {
+            if (matchesConfiguredSchool(item.textContent, searchTerm)) {
                 return item;
             }
         }
@@ -140,8 +150,7 @@
         // State 1: Check if there's a "last selected" school
         const lastSelectedSchool = document.querySelector('#selectedList > div > div.listItem > div');
         if (lastSelectedSchool) {
-            const lastText = (lastSelectedSchool.textContent || '').toLowerCase();
-            if (lastText.includes(searchTerm) || searchTerm.includes(lastText.split(/[\s,]+/)[0])) {
+            if (matchesConfiguredSchool(lastSelectedSchool.textContent, searchTerm)) {
                 console.log('Oikotie: Found last selected school matching config, clicking it');
                 lastSelectedSchool.click();
                 return 'clicked_last_selected';
@@ -229,8 +238,7 @@
         // First: try immediate presence of last-selected school (only if it matches configured school)
         const lastNow = document.querySelector('#selectedList > div > div.listItem > div');
         if (lastNow && searchTerm) {
-            const lastText = (lastNow.textContent || '').toLowerCase();
-            if (lastText.includes(searchTerm) || searchTerm.split(/\s+/).some((p) => lastText.includes(p))) {
+            if (matchesConfiguredSchool(lastNow.textContent, searchTerm)) {
                 console.log('Oikotie: Found last selected school matching config, clicking it');
                 try { lastNow.click(); } catch (e) { console.error('Error clicking last selected', e); }
                 return;
@@ -240,8 +248,7 @@
         // Wait briefly for the last-selected school to appear. If it matches config, click and stop.
         const observedLast = await observeSelector('#selectedList > div > div.listItem > div', 2000);
         if (observedLast && searchTerm) {
-            const lastText = (observedLast.textContent || '').toLowerCase();
-            if (lastText.includes(searchTerm) || searchTerm.split(/\s+/).some((p) => lastText.includes(p))) {
+            if (matchesConfiguredSchool(observedLast.textContent, searchTerm)) {
                 console.log('Oikotie: Observed last selected school matching config, clicking');
                 try { observedLast.click(); } catch (e) { console.error('Error clicking observed element', e); }
                 return;
