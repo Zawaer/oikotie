@@ -1,4 +1,4 @@
-# Store listing copy — Oikotie v3.0
+# Store listing copy — Oikotie v3.1
 
 Copy for the Chrome Web Store and Firefox Add-ons (AMO) listings. Keep this in
 sync with the manifest and README when the extension changes.
@@ -112,6 +112,28 @@ Jos koulullesi ei vielä ole täyttä tukea, Oikotie vie sinut silti koulusi kir
 
 ---
 
+## Release notes — v3.1
+
+**English**
+
+> A new look: fresh colours, a new icon and a clearer settings page.
+>
+> Oikotie now works for **every school in MPASSid**, not only fully supported ones. It takes you all the way to your school's login page; where it doesn't yet know your school's login address, you sign in there yourself.
+>
+> Also: Finnish is now the default language, and a fix for a bug that could pick the wrong school in MPASSid when your browser remembered another one.
+
+**Suomeksi**
+
+> Uusi ilme: uudet värit, uusi kuvake ja selkeämpi asetussivu.
+>
+> Oikotie toimii nyt **kaikille MPASSidin kouluille**, ei vain täysin tuetuille. Se vie sinut koulusi kirjautumissivulle asti; jos koulusi kirjautumisosoitetta ei vielä tunneta, kirjaudut siellä itse.
+>
+> Lisäksi: suomi on nyt oletuskieli, ja korjattu virhe, jonka vuoksi MPASSidissä saattoi valikoitua väärä koulu, jos selain muisti toisen.
+
+No new permissions, so Chrome does not ask users to re-approve this update.
+
+---
+
 ## Release notes — v3.0
 
 **English**
@@ -165,7 +187,7 @@ Certify: does not sell data · does not use data for unrelated purposes · does 
 - **Categories:** Other. (Not Privacy & Security — it isn't a privacy tool, and reviewers dislike category padding.)
 - **Email:** leave empty; the Google Forms handle support and a listed address attracts spam.
 - **Description markup:** AMO accepts `<b> <i> <a> <ul> <ol> <li>` — use them for the headings and lists; plain Markdown is not rendered.
-- **Release notes:** the English notes above *without* the Chrome re-approval paragraph — Firefox grants new host permissions on update without disabling the add-on.
+- **Release notes:** the English notes for the current version above, without any Chrome re-approval paragraph — Firefox grants new host permissions on update without disabling the add-on.
 - **Support site:** https://github.com/Zawaer/oikotie/issues
 - **Homepage:** https://github.com/Zawaer/oikotie
 - **License:** GNU General Public License v3.0
