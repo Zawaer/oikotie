@@ -16,4 +16,11 @@ for (const lang of ['fi', 'en']) {
     if (result.status !== 0) process.exit(result.status ?? 1);
     console.log(out);
   }
+  // AMO takes screenshots up to 2400x1800: the flow again at 1.875x, still 16:10.
+  if ('01-flow'.startsWith(filter)) {
+    const out = `../dist/store/${lang}/01-flow-2400x1500.png`;
+    const result = spawnSync('npx', ['remotion', 'still', `01-flow-${lang}`, out, '--scale=1.875', '--log=error'], { stdio: 'inherit' });
+    if (result.status !== 0) process.exit(result.status ?? 1);
+    console.log(out);
+  }
 }
