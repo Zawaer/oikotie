@@ -4,7 +4,7 @@
 import { spawnSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const SHOTS = ['01-flow', '02-popup', '03-mpassid', '04-password', '05-settings', 'promo-tile', 'marquee'];
+const SHOTS = ['01-flow', 'promo-tile', 'marquee'];
 const SIZES = { 'promo-tile': '440x280', marquee: '1400x560' };
 const filter = process.argv[2] || '';
 

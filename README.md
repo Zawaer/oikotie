@@ -54,12 +54,12 @@ npm install
 npm run build      # -> dist/chrome/ and dist/firefox/
 npm run package    # -> dist/releases/*.zip
 npm run build:icons   # PNG icons from ui/icons/*.svg
-npm run build:store   # store screenshots, promo tile and marquee -> dist/store/{fi,en}/
+npm run build:store   # store screenshot, promo tile and marquee -> dist/store/{fi,en}/
 npm run build:tiles   # real login-page captures for the promo collage -> dist/store/tiles/
 npm test           # see below
 ```
 
-The store listing images are a small [Remotion](https://www.remotion.dev/) project in `promo/`, kept separate so its dependencies stay out of the extension; run `npm install` there once. `npm run build:store` captures the extension's real UI in Finnish and English into `promo/public/screens/` and then renders five 1280×800 screenshots, the promo tile and the marquee for each language. To tweak the layout or copy, `npm run studio` in `promo/` edits live and `npm run render` there re-renders without new captures.
+The store listing images are a small [Remotion](https://www.remotion.dev/) project in `promo/`, kept separate so its dependencies stay out of the extension; run `npm install` there once. `npm run build:store` captures the popup in Finnish and English into `promo/public/screens/` and then renders, for each language, one 1280×800 screenshot of the whole login flow, the promo tile and the marquee. To tweak the layout or copy, `npm run studio` in `promo/` edits live and `npm run render` there re-renders without new captures.
 
 Load `dist/chrome` via **Load unpacked** at `chrome://extensions/` with Developer mode on. For Firefox, `npm run dev:firefox` opens a temporary profile with the extension loaded; `npm run lint:firefox` validates the build before an AMO upload.
 

@@ -13,13 +13,11 @@ export type ShotProps = {
   lockup?: boolean;
   /** What the tablet shows: the login-flow collage, or one capture from public/. */
   screen: { kind: 'collage'; popup?: string } | { kind: 'image'; src: string; pos?: string; zoom?: number };
-  /** A popup capture floating in front of the tablet, as in the browser. */
-  popup?: string;
 };
 
 // 1280x800 store screenshot: copy on the left, a tilted tablet on the right.
 // Composed after the original hand-made listing image.
-export const Shot: React.FC<ShotProps> = ({ headline, sub, lockup = true, screen, popup }) => {
+export const Shot: React.FC<ShotProps> = ({ headline, sub, lockup = true, screen }) => {
   const screenW = 690, screenH = 460, bezel = 16;
   const deviceW = screenW + bezel * 2, deviceH = screenH + bezel * 2;
 
@@ -58,13 +56,6 @@ export const Shot: React.FC<ShotProps> = ({ headline, sub, lockup = true, screen
         </div>
       </div>
 
-      {popup && (
-        <Img src={staticFile(popup)} style={{
-          position: 'absolute', left: 868, top: 124, width: 290, display: 'block',
-          borderRadius: 12, transform: 'rotate(-2.5deg)',
-          boxShadow: '0 40px 80px rgba(15,46,39,.32), 0 0 0 1px rgba(15,46,39,.10)',
-        }} />
-      )}
     </AbsoluteFill>
   );
 };

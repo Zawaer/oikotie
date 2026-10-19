@@ -3,9 +3,9 @@ import { Still } from 'remotion';
 import { Shot, ShotProps } from './Shot';
 import { Tile } from './Tile';
 
-// The store screenshots, one set per language. Captures in public/screens/
-// come from scripts/build-store-assets.mjs; public/tiles/ from
-// scripts/build-promo-tiles.mjs.
+// The store screenshot, one per language: the whole login flow on a tablet.
+// public/screens/ comes from scripts/build-store-assets.mjs; public/tiles/
+// from scripts/build-promo-tiles.mjs.
 type Lang = 'fi' | 'en';
 
 const SHOTS: { id: string; props: Record<Lang, ShotProps> }[] = [
@@ -21,66 +21,6 @@ const SHOTS: { id: string; props: Record<Lang, ShotProps> }[] = [
         headline: ['Oikotie', 'Straight in.'], lockup: false,
         sub: 'Kampus, Nova and Studeo: Oikotie clicks through the login steps for you.',
         screen: { kind: 'collage', popup: 'screens/popup-en.png' },
-      },
-    },
-  },
-  {
-    id: 'popup',
-    props: {
-      fi: {
-        headline: ['Kolme palvelua,', 'yksi laajennus.'],
-        sub: 'Kytke Kampus, Nova ja Studeo päälle tai pois suoraan ponnahdusikkunasta.',
-        screen: { kind: 'image', src: 'tiles/kampus.png' }, popup: 'screens/popup-fi.png',
-      },
-      en: {
-        headline: ['Three services,', 'one extension.'],
-        sub: 'Switch Kampus, Nova and Studeo on or off right from the popup.',
-        screen: { kind: 'image', src: 'tiles/kampus.png' }, popup: 'screens/popup-en.png',
-      },
-    },
-  },
-  {
-    id: 'mpassid',
-    props: {
-      fi: {
-        headline: ['Valitsee koulusi', 'puolestasi.'],
-        sub: 'Oikotie hakee koulusi MPASSidistä joka kerta. Ei kirjoittamista.',
-        screen: { kind: 'image', src: 'screens/mpass-fi.png', pos: '50% 50%', zoom: 1.7 },
-      },
-      en: {
-        headline: ['Picks your school', 'for you.'],
-        sub: 'Oikotie finds your school in MPASSid every time. No typing.',
-        screen: { kind: 'image', src: 'screens/mpass-en.png', pos: '50% 50%', zoom: 1.7 },
-      },
-    },
-  },
-  {
-    id: 'password',
-    props: {
-      fi: {
-        headline: ['Ei koske', 'salasanaasi.'],
-        sub: 'Selaimesi täyttää tallennetut tunnuksesi. Oikotie ei tallenna niitä eikä lähetä minnekään.',
-        screen: { kind: 'image', src: 'screens/school-fi.png', pos: '50% 50%', zoom: 1.7 },
-      },
-      en: {
-        headline: ['Never touches', 'your password.'],
-        sub: 'Your browser fills in your saved credentials. Oikotie never stores them or sends them anywhere.',
-        screen: { kind: 'image', src: 'screens/school-en.png', pos: '50% 50%', zoom: 1.7 },
-      },
-    },
-  },
-  {
-    id: 'settings',
-    props: {
-      fi: {
-        headline: ['Valitse koulusi', 'kerran.'],
-        sub: 'Asetukset hoituvat minuutissa: koulu, Nova-rooli ja Studeon kouluaste.',
-        screen: { kind: 'image', src: 'screens/settings-fi.png' },
-      },
-      en: {
-        headline: ['Set your school', 'once.'],
-        sub: 'Setup takes a minute: your school, Nova role and Studeo grade level.',
-        screen: { kind: 'image', src: 'screens/settings-en.png' },
       },
     },
   },
