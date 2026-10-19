@@ -16,11 +16,13 @@ export type CollageProps = {
   height: number;
   /** Swap in a logged-in dashboard capture for the final tile. */
   destination?: string;
+  /** The popup capture shown as the final tile when there is no destination. */
+  popup?: string;
 };
 
 type Quad = { src: string; pos?: string; zoom?: number; device?: boolean };
 
-export const Collage: React.FC<CollageProps> = ({ width: W, height: H, destination }) => {
+export const Collage: React.FC<CollageProps> = ({ width: W, height: H, destination, popup = 'tiles/popup.png' }) => {
   const w = W / 2, h = H / 2;
 
   const quads: (Quad & { x: number; y: number })[] = [
@@ -34,7 +36,7 @@ export const Collage: React.FC<CollageProps> = ({ width: W, height: H, destinati
     // product shot instead - sized to match, bleeding off the bottom edge.
     destination
       ? { x: 0, y: h, src: destination, pos: '50% 30%', zoom: 1.1 }
-      : { x: 0, y: h, src: 'tiles/popup.png', device: true },
+      : { x: 0, y: h, src: popup, device: true },
     // Espoo's blue graphic and the ESPOO ESBO mark.
     { x: w, y: h, src: 'tiles/espoo.png', pos: '52% 42%', zoom: 1.15 },
   ];
@@ -73,9 +75,15 @@ export const Collage: React.FC<CollageProps> = ({ width: W, height: H, destinati
 
       <svg style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
         <defs>
-          <marker id="head" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
-            <path d="M1 1 L9 5 L1 9 z" fill={T.text} />
+          <marker id="head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4.4" markerHeight="4.4" orient="auto-start-reverse">
+            <path d="M1.5 1 L8.5 5 L1.5 9" fill="none" stroke={T.text} strokeWidth={1.3} strokeLinecap="round" strokeLinejoin="round" />
           </marker>
+          <marker id="head-shadow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4.4" markerHeight="4.4" orient="auto-start-reverse">
+            <path d="M1.5 1 L8.5 5 L1.5 9" fill="none" stroke="#0f2e27" strokeWidth={1.3} strokeLinecap="round" strokeLinejoin="round" />
+          </marker>
+          <filter id="blur" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="6" />
+          </filter>
           <filter id="hand" x="-6%" y="-6%" width="112%" height="112%">
             <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves={2} seed={11} result="n" />
             <feDisplacementMap in="SourceGraphic" in2="n" scale={2.4} />
@@ -84,6 +92,11 @@ export const Collage: React.FC<CollageProps> = ({ width: W, height: H, destinati
             <feDropShadow dx="0" dy="2" stdDeviation="2.5" floodColor="#fff" floodOpacity="0.9" />
           </filter>
         </defs>
+        {/* each arrow floats a little above the page: a soft shadow below and to the right */}
+        <g fill="none" stroke="#0f2e27" strokeLinecap="round" strokeLinejoin="round" opacity={0.28}
+           markerEnd="url(#head-shadow)" filter="url(#blur)" transform="translate(14 26)">
+          {arrows.map((a, i) => <path key={i} d={a.d} strokeWidth={a.sw + 2} />)}
+        </g>
         <g fill="none" stroke={T.text} strokeLinecap="round" strokeLinejoin="round"
            markerEnd="url(#head)" filter="url(#hand)">
           {arrows.map((a, i) => (
