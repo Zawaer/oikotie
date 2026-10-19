@@ -59,7 +59,7 @@ npm run build:tiles   # real login-page captures for the promo collage -> dist/s
 npm test           # see below
 ```
 
-The store listing images are a small [Remotion](https://www.remotion.dev/) project in `promo/`, kept separate so its dependencies stay out of the extension; run `npm install` there once. `npm run build:store` captures the popup in Finnish and English into `promo/public/screens/` and then renders, for each language, one 1280×800 screenshot of the whole login flow, the promo tile and the marquee. To tweak the layout or copy, `npm run studio` in `promo/` edits live and `npm run render` there re-renders without new captures.
+The store listing images are a small [Remotion](https://www.remotion.dev/) project in `promo/`, kept separate so its dependencies stay out of the extension; run `npm install` there once. `npm run build:store` renders, for each language, one 1280×800 screenshot of the whole login flow, the promo tile and the marquee. The flow is built from the captures in `promo/public/tiles/`: `npm run build:tiles` refreshes the login pages, and `dashboard.png`, the signed-in Kampus page it ends on, is captured by hand. `npm run studio` in `promo/` edits the layout and copy live.
 
 Load `dist/chrome` via **Load unpacked** at `chrome://extensions/` with Developer mode on. For Firefox, `npm run dev:firefox` opens a temporary profile with the extension loaded; `npm run lint:firefox` validates the build before an AMO upload.
 

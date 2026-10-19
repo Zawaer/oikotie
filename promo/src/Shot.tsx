@@ -12,7 +12,7 @@ export type ShotProps = {
   /** Show the Oikotie lockup above the headline (off when the headline is the name). */
   lockup?: boolean;
   /** What the tablet shows: the login-flow collage, or one capture from public/. */
-  screen: { kind: 'collage'; popup?: string } | { kind: 'image'; src: string; pos?: string; zoom?: number };
+  screen: { kind: 'collage'; destination?: string } | { kind: 'image'; src: string; pos?: string; zoom?: number };
 };
 
 // 1280x800 store screenshot: copy on the left, a tilted tablet on the right.
@@ -49,7 +49,7 @@ export const Shot: React.FC<ShotProps> = ({ headline, sub, lockup = true, screen
           <div style={{ position: 'absolute', inset: 0, borderRadius: 34, background: '#fbfcfa', padding: bezel, boxShadow: 'inset 0 0 0 1px rgba(15,46,39,.08)' }}>
             <div style={{ width: screenW, height: screenH, borderRadius: 20, overflow: 'hidden', background: T.page }}>
               {screen.kind === 'collage'
-                ? <Collage width={screenW} height={screenH} popup={screen.popup} />
+                ? <Collage width={screenW} height={screenH} destination={screen.destination} />
                 : <Img src={staticFile(screen.src)} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: screen.pos ?? '50% 0%', display: 'block', transform: `scale(${screen.zoom ?? 1})`, transformOrigin: screen.pos ?? '50% 0%' }} />}
             </div>
           </div>

@@ -35,7 +35,7 @@ export const Collage: React.FC<CollageProps> = ({ width: W, height: H, destinati
     // on screen at roughly four times the scale of the other tiles. Show it as a
     // product shot instead - sized to match, bleeding off the bottom edge.
     destination
-      ? { x: 0, y: h, src: destination, pos: '50% 30%', zoom: 1.1 }
+      ? { x: 0, y: h, src: destination, pos: '50% 22%', zoom: 1.55 }
       : { x: 0, y: h, src: popup, device: true },
     // Espoo's blue graphic and the ESPOO ESBO mark.
     { x: w, y: h, src: 'tiles/espoo.png', pos: '52% 42%', zoom: 1.15 },

@@ -3,9 +3,8 @@ import { Still } from 'remotion';
 import { Shot, ShotProps } from './Shot';
 import { Tile } from './Tile';
 
-// The store screenshot, one per language: the whole login flow on a tablet.
-// public/screens/ comes from scripts/build-store-assets.mjs; public/tiles/
-// from scripts/build-promo-tiles.mjs.
+// The store screenshot, one per language: the whole login flow on a tablet,
+// built from the page captures in public/tiles/.
 type Lang = 'fi' | 'en';
 
 const SHOTS: { id: string; props: Record<Lang, ShotProps> }[] = [
@@ -15,12 +14,12 @@ const SHOTS: { id: string; props: Record<Lang, ShotProps> }[] = [
       fi: {
         headline: ['Oikotie', 'suoraan sisään.'], lockup: false,
         sub: 'Kampus, Nova ja Studeo: Oikotie klikkaa kirjautumisen välivaiheet puolestasi.',
-        screen: { kind: 'collage', popup: 'screens/popup-fi.png' },
+        screen: { kind: 'collage', destination: 'tiles/dashboard.png' },
       },
       en: {
         headline: ['Oikotie', 'Straight in.'], lockup: false,
         sub: 'Kampus, Nova and Studeo: Oikotie clicks through the login steps for you.',
-        screen: { kind: 'collage', popup: 'screens/popup-en.png' },
+        screen: { kind: 'collage', destination: 'tiles/dashboard.png' },
       },
     },
   },
